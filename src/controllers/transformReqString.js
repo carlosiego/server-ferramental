@@ -4,6 +4,5 @@ export const transformReqString = (description) => {
     if(descriptionMod.slice(-1) != '%'){
         descriptionMod = descriptionMod + '%'
     }
-    console.log(descriptionMod)
     return descriptionMod
 }
