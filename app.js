@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
-import routes from './routes/index.js'
+import routes from './src/routes/index.js'
 import oracledb from 'oracledb'
 import fs from 'fs'
 
