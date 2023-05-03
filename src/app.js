@@ -9,7 +9,7 @@ let libPath;
 if (process.platform === 'win32') {           // Windows
   libPath = 'C:\\instantclient';
 } else if (process.platform === 'linux') {   // Linux
-  libPath = process.env.HOME + '/Documentos/instantclient';
+  libPath = process.env.HOME + '/Documentos/instantclient_linux';
 }
 
 if (libPath && fs.existsSync(libPath)) {
