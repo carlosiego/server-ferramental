@@ -8,7 +8,7 @@ import fs from 'fs'
 let libPath;
 if (process.platform === 'win32') {           // Windows
   libPath = 'C:\\instantclient';
-} else if (process.platform === 'linux') {   // macOS
+} else if (process.platform === 'linux') {   // Linux
   libPath = process.env.HOME + '/Documentos/instantclient';
 }
 

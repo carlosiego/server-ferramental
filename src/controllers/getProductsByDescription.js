@@ -6,6 +6,7 @@ export const getProductsByDescription = async(description) => {
 
   let connection;
   let descriptionMod = transformReqString(description)
+  console.log(descriptionMod)
   try {
 
     connection = await oracledb.getConnection(dbConfig);
@@ -27,7 +28,6 @@ export const getProductsByDescription = async(description) => {
 
   }catch (err) {
     console.error(err);
-    return 0;
   }finally {
     if (connection) {
       try {

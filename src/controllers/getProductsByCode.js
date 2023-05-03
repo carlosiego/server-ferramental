@@ -25,7 +25,6 @@ export const getProductsByCode = async(code) => {
 
   }catch (err) {
     console.error(err);
-    return 0;
   }finally {
     if (connection) {
       try {
