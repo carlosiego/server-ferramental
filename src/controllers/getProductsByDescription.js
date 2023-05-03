@@ -4,36 +4,37 @@ import { transformReqString } from './transformReqString.js'
 
 export const getProductsByDescription = async(description) => {
 
-    let connection;
-    let descriptionMod = transformReqString(description)
-    try {
-  
-      connection = await oracledb.getConnection(dbConfig);
-  
-      let produtcs = await connection.execute(`
-      SELECT
-        PCPRODUT.DESCRICAO,
-        PCTABPR.PTABELA,
-        PCEST.QTESTGER,
-        PCPRODUT.EMBALAGEM,
-        PCPRODUT.CODPROD
-      FROM PCPRODUT
-        JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
-        JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-      WHERE PCPRODUT.DESCRICAO LIKE '${descriptionMod}'
-      `)
+  let connection;
+  let descriptionMod = transformReqString(description)
+  try {
 
-      return produtcs.rows
+    connection = await oracledb.getConnection(dbConfig);
 
-    } catch (err) {
-      console.error(err);
-    } finally {
-      if (connection) {
-        try {
-          await connection.close();
-        } catch (err) {
-          console.log(err);
-        }
+    let produtcs = await connection.execute(`
+    SELECT
+      PCPRODUT.DESCRICAO,
+      PCTABPR.PTABELA,
+      PCEST.QTESTGER,
+      PCPRODUT.EMBALAGEM,
+      PCPRODUT.CODPROD
+    FROM PCPRODUT
+      JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+      JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+    WHERE PCPRODUT.DESCRICAO LIKE '${descriptionMod}'
+    `)
+
+    return produtcs.rows;
+
+  }catch (err) {
+    console.error(err);
+    return 0;
+  }finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.log(err);
       }
     }
+  }
 }
