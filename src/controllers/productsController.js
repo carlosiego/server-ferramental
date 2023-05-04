@@ -51,7 +51,6 @@ class productsController {
                 message: 'Erro, não foi possível conectar ao banco de dados'
             })  
         })
-        
     }
 }
 
