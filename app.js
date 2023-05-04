@@ -13,6 +13,7 @@ if (process.platform === 'win32') {           // Windows
 
 if (libPath && fs.existsSync(libPath)) {
   oracledb.initOracleClient({ libDir: libPath });
+  console.log('instant oracle inited with sucess')
 }
 
 
