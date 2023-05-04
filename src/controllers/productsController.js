@@ -41,6 +41,7 @@ class productsController {
             }else{
                 res.status(400).json({
                     error: true,
+                    message: `Erro, não existe produto com o código ${code}`,
                     products: []
                 })
             }
