@@ -1,7 +1,7 @@
-import dbConfig from '../dbConfig.js'
-import oracledb from  'oracledb'
+const dbConfig = require('../dbConfig.js')
+const oracledb = require( 'oracledb')
 
-export const getProductsByCode = async(code) => {
+const getProductsByCode = async(code) => {
   let connection;
 
   try {
@@ -35,3 +35,5 @@ export const getProductsByCode = async(code) => {
     }
   }
 }
+
+module.exports = getProductsByCode

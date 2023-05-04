@@ -1,5 +1,5 @@
-import { getProductsByDescription } from './getProductsByDescription.js'
-import { getProductsByCode } from './getProductsByCode.js'
+const getProductsByDescription = require('./getProductsByDescription.js')
+const getProductsByCode = require('./getProductsByCode.js')
 
 class productsController {
 
@@ -55,4 +55,4 @@ class productsController {
 }
 
 
-export default productsController
+module.exports = productsController

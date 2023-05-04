@@ -1,9 +1,8 @@
-import dotenv from 'dotenv'
-dotenv.config()
-import express from 'express'
-import routes from './src/routes/index.js'
-import oracledb from 'oracledb'
-import fs from 'fs'
+require('dotenv').config()
+const express = require('express')
+const routes = require('./src/routes/index.js')
+const oracledb = require('oracledb')
+const fs = require('fs')
 
 let libPath;
 if (process.platform === 'win32') {           // Windows
@@ -31,4 +30,4 @@ app.use((req, res, next) => {
 
 routes(app)
 
-export default app
+module.exports = app

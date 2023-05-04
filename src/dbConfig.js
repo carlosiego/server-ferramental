@@ -1,5 +1,4 @@
-import dotenv from 'dotenv'
-dotenv.config()
+require('dotenv').config()
 
 const dbConfig = {
     user: process.env.DB_USER,
@@ -7,4 +6,4 @@ const dbConfig = {
     connectString: process.env.DB_HOST
 }
 
-export default dbConfig
+module.exports = dbConfig

@@ -1,8 +1,8 @@
-import dbConfig from '../dbConfig.js'
-import oracledb from  'oracledb'
-import { transformReqString } from './transformReqString.js'
+const dbConfig = require('../dbConfig.js')
+const oracledb =  require('oracledb')
+const transformReqString = require('./transformReqString.js')
 
-export const getProductsByDescription = async(description) => {
+const getProductsByDescription = async(description) => {
 
   let connection;
   let descriptionMod = transformReqString(description)
@@ -38,3 +38,5 @@ export const getProductsByDescription = async(description) => {
     }
   }
 }
+
+module.exports = getProductsByDescription

@@ -1,5 +1,5 @@
-import express from 'express'
-import products from './productsRoutes.js'
+const express = require('express')
+const products = require('./productsRoutes.js')
 
 const routes = (app) =>{
     app.use(
@@ -8,4 +8,4 @@ const routes = (app) =>{
     )
 }
 
-export default routes
+module.exports = routes

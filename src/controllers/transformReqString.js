@@ -1,4 +1,4 @@
-export const transformReqString = (description) => {
+const transformReqString = (description) => {
     let descriptionMod = description.toUpperCase()
     descriptionMod = descriptionMod.replaceAll(' ', '%')
     if(descriptionMod.slice(-1) != '%'){
@@ -6,3 +6,5 @@ export const transformReqString = (description) => {
     }
     return descriptionMod
 }
+
+module.exports = transformReqString
