@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 
 const dbConfig = {
     user: process.env.DB_USER,
@@ -6,4 +6,4 @@ const dbConfig = {
     connectString: process.env.DB_HOST
 }
 
-module.exports = dbConfig
+module.exports = dbConfig;

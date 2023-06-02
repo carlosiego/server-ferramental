@@ -30,7 +30,7 @@ class ProductsRepository {
           FROM PCPRODUT
             JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
             JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.CODPROD = ${code}
+          WHERE PCPRODUT.CODPROD = ${code} AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
           `)
           
           return produtcs.rows;
@@ -67,7 +67,7 @@ class ProductsRepository {
           FROM PCPRODUT
             JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
             JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.DESCRICAO LIKE '${descriptionMod}'
+          WHERE PCPRODUT.DESCRICAO LIKE '${descriptionMod}' AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
           `)
       
           return produtcs.rows;
@@ -87,10 +87,10 @@ class ProductsRepository {
     
     async findByCodeBar(codebar) {
         let connection;
-        let n = 'a'
+
         try {
 
-            connection = await oracledb.getConnection(n);
+            connection = await oracledb.getConnection(dbConfig);
 
             let produtcs = await connection.execute(`
           SELECT
@@ -102,7 +102,7 @@ class ProductsRepository {
           FROM PCPRODUT
             JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
             JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.CODAUXILIAR = ${codebar}
+          WHERE PCPRODUT.CODAUXILIAR = ${codebar} AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
           `)
       
           return produtcs.rows;

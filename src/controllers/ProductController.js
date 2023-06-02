@@ -1,8 +1,8 @@
-const ProductsRepository = require('../repositories/ProductsRepository.js')
+const ProductsRepository = require('../repositories/ProductsRepository.js');
 
 class ProductsController {
     
-    static showByCode = async (req, res) => {
+    async showByCode(req, res) {
         let { code } = req.params
         await ProductsRepository.findByCode(code)
         .then((product) => {
@@ -25,7 +25,7 @@ class ProductsController {
         })
     }
 
-    static showByDescription = async (req, res) => {
+    async showByDescription(req, res) {
         let { description } = req.params
         await ProductsRepository.findByDescription(description)
         .then((products) => {
@@ -48,7 +48,7 @@ class ProductsController {
         })
     }
 
-    static showByCodeBar = async (req, res) => {
+    async showByCodeBar(req, res) {
         const codeBar = req.params.codebar
 
         await ProductsRepository.findByCodeBar(codeBar)
@@ -71,7 +71,8 @@ class ProductsController {
             })
         })
     }
+
 }
 
 
-module.exports = ProductsController
+module.exports = new ProductsController();
