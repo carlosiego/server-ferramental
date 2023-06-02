@@ -2,7 +2,10 @@ require('dotenv').config()
 const express = require('express')
 const oracledb = require('oracledb')
 const fs = require('fs')
+
 const productsRouter = require('./src/routes/productsRoutes')
+const ordersRouter = require('./src/routes/ordersRoutes')
+const budgetsRouter = require('./src/routes/budgetsRoutes')
 
 let libPath;
 if (process.platform === 'win32') {           // Windows
@@ -27,8 +30,8 @@ app.use((req, res, next) => {
       "Origin, X-Requested-With, Content-Type, Accept"
     );
     next();
-  });
+});
 
-app.use(productsRouter)
+app.use(productsRouter, ordersRouter, budgetsRouter)
 
 module.exports = app
