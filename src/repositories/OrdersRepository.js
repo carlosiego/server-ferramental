@@ -1,22 +1,47 @@
 const dbConfig = require('../dbConfig')
 const oracledb = require('oracledb')
 
-class OrderRepository {
+class OrdersRepository {
 
     async findByNumOrder(numberOrder) {
-        
+      
         let connection; 
         
         try {
       
             connection = await oracledb.getConnection(dbConfig);
         
-            let order = await connection.execute(`
+            let orderInfosMain = await connection.execute(`
+            SELECT 
+                PCPEDC.NUMPED,
+                PCPEDC.DATA,
+                PCPEDC.VLTOTAL,
+                PCPEDC.CODCLI,
+                PCPEDC.POSICAO,
+                PCPEDC.OBS,
+                PCPEDC.OBS1,
+                PCPEDC.OBS2,
+                PCPEDC.OBSENTREGA1,
+                PCPEDC.OBSENTREGA2,
+                PCPEDC.OBSENTREGA3,
+                PCPEDC.NUMITENS,
+                PCPEDC.CODUSUR,
+                PCPEDC.CODCOB,
+                PCPEDC.PRAZO1,
+                PCPEDC.PRAZO2,
+                PCPEDC.PRAZO3,
+                PCPEDC.PRAZO4,
+                PCPEDC.PRAZO5
+            FROM PCPEDC 
+            WHERE PCPEDC.NUMPED = ${numberOrder}
+            `)
+
+            let orderInfosProducts = await connection.execute(`
             SELECT
                 PCPRODUT.DESCRICAO,
                 PCPEDI.CODPROD,
                 PCPEDI.QT,
-                PCPEDI.PVE
+                PCPEDI.PVENDA,
                 PCPEDI.CODST,
                 (CASE WHEN(PCPEDI.CODST IN (5)) THEN 19
                 WHEN(PCPEDI.CODST IN (6)) THEN 12
@@ -36,7 +61,7 @@ class OrderRepository {
             WHERE PCPEDI.NUMPED = ${numberOrder}
             `)
             
-            return order.rows;
+            return [ orderInfosMain.rows, orderInfosProducts.rows ];
         
           }catch (err) {
             console.error(err);
@@ -52,4 +77,4 @@ class OrderRepository {
     }
 }
 
-module.exports = new OrderRepository()
+module.exports = new OrdersRepository()

@@ -1,15 +1,36 @@
-const OrderRepository = require('../repositories/OrdersRepository')
+const OrdersRepository = require('../repositories/OrdersRepository')
 
 class OrderController {
 
     async showByNum(req, res) {
-
+        
         let numberOrder = req.params.numberorder
 
-        await OrderRepository.findByNumOrder(numberOrder)
-        .then((order) => {
-            if(order.length > 0){
-                order = order.map((item) => {
+        await OrdersRepository.findByNumOrder(numberOrder)
+        .then(([ orderInfosMain, orderInfosProducts ]) => {
+            if(orderInfosMain.length > 0){
+
+                orderInfosMain = orderInfosMain.map((item) => {
+                    return {
+                        numped: item[0],
+                        data: item[1],
+                        valueTotal: item[2],
+                        codcli: item[3],
+                        position: item[4],
+                        obs: item[5],
+                        obs1: item[6],
+                        obs2: item[7],
+                        obsdelivery1: item[8],
+                        obsdelivery2: item[9],
+                        obsdelivery3: item[10],
+                        numitens: item[11],
+                        codseller: item [12],
+                        codcob: item[13],
+                        terms: [item[14], item[15], item[16], item[17], item[18]],
+                    }
+                })
+
+                orderInfosProducts = orderInfosProducts.map((item) => {
                     return {
                         description: item[0],
                         codprod: item[1],
@@ -22,7 +43,8 @@ class OrderController {
                 })
                 res.json({
                     error: false,
-                    order
+                    orderInfosMain,
+                    orderInfosProducts
                 })
             }else{
                 res.status(404).json({
