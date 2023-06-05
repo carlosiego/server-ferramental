@@ -1,12 +1,12 @@
-const OrdersRepository = require('../repositories/OrdersRepository')
+const SalesOrdersRepository = require('../repositories/SalesOrdersRepository')
 
-class OrderController {
+class SalesOrderController {
 
     async showByNum(req, res) {
         
         let numberOrder = req.params.numberorder
 
-        await OrdersRepository.findByNumOrder(numberOrder)
+        await SalesOrdersRepository.findByNumOrder(numberOrder)
         .then(([ orderInfosMain, orderInfosProducts ]) => {
             if(orderInfosMain.length > 0){
 
@@ -61,4 +61,4 @@ class OrderController {
     }
 }
 
-module.exports = new OrderController()
+module.exports = new SalesOrderController()

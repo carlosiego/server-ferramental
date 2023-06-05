@@ -4,7 +4,7 @@ const oracledb = require('oracledb')
 const fs = require('fs')
 
 const productsRouter = require('./src/routes/productsRoutes')
-const ordersRouter = require('./src/routes/ordersRoutes')
+const salesOrdersRouter = require('./src/routes/salesOrdersRoutes')
 const budgetsRouter = require('./src/routes/budgetsRoutes')
 
 let libPath;
@@ -32,6 +32,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(productsRouter, ordersRouter, budgetsRouter)
+app.use(productsRouter, salesOrdersRouter, budgetsRouter)
 
 module.exports = app

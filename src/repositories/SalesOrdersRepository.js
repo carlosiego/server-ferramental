@@ -1,7 +1,7 @@
 const dbConfig = require('../dbConfig')
 const oracledb = require('oracledb')
 
-class OrdersRepository {
+class SalesOrdersRepository {
 
     async findByNumOrder(numberOrder) {
       
@@ -77,4 +77,4 @@ class OrdersRepository {
     }
 }
 
-module.exports = new OrdersRepository()
+module.exports = new SalesOrdersRepository()
