@@ -1,5 +1,5 @@
-const dbConfig = require('../dbConfig.js');
-const oracledb = require( 'oracledb');
+const connection = require('../database/dbConnection')
+const executeQuery = require('../database/executeQuery');
 
 const transformReqString = (description) => {
     let descriptionMod = description.toUpperCase()
@@ -14,113 +14,76 @@ class ProductsRepository {
 
     async findByCode(code) {
 
-        let connection;
+      let product = await executeQuery(`
+      SELECT
+        PCPRODUT.DESCRICAO,
+        PCTABPR.PTABELA,
+        PCEST.DTULTENT,
+        PCEST.DTULTSAIDA,
+        PCEST.QTULTENT,
+        PCEST.QTESTGER,
+        PCEST.QTRESERV,
+        PCPRODUT.EMBALAGEM,
+        PCPRODUT.CODPROD,
+        PCPRODUT.CODAUXILIAR
+      FROM PCPRODUT
+        JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+        JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+      WHERE PCPRODUT.CODPROD = :code AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+      `, { code })
       
-        try {
-      
-          connection = await oracledb.getConnection(dbConfig);
-      
-          let produtcs = await connection.execute(`
-          SELECT
-            PCPRODUT.DESCRICAO,
-            PCTABPR.PTABELA,
-            PCEST.QTESTGER,
-            PCPRODUT.EMBALAGEM,
-            PCPRODUT.CODPROD,
-            PCPRODUT.CODAUXILIAR
-          FROM PCPRODUT
-            JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
-            JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.CODPROD = ${code} AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
-          `)
-          
-          return produtcs.rows;
-      
-        }catch (err) {
-          console.error(err);
-        }finally {
-          if (connection) {
-            try {
-              await connection.close();
-            } catch (err) {
-              console.log(err);
-            }
-          }
-        }
+      return product;
     }
 
-    async findByDescription(description) {
+    async findByDescription(description, orderBy= 'ASC') {
 
-        let connection;
         let descriptionMod = transformReqString(description)
+        let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
         console.log(descriptionMod)
-        try {
-      
-          connection = await oracledb.getConnection(dbConfig);
-      
-          let produtcs = await connection.execute(`
-          SELECT
-            PCPRODUT.DESCRICAO,
-            PCTABPR.PTABELA,
-            PCEST.QTESTGER,
-            PCPRODUT.EMBALAGEM,
-            PCPRODUT.CODPROD,
-            PCPRODUT.CODAUXILIAR
-          FROM PCPRODUT
-            JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
-            JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.DESCRICAO LIKE '${descriptionMod}' AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
-          `)
-      
-          return produtcs.rows;
-      
-        }catch (err) {
-          console.error(err);
-        }finally {
-          if (connection) {
-            try {
-              await connection.close();
-            } catch (err) {
-              console.log(err);
-            }
-          }
-        }
-    }
     
-    async findByCodeBar(codebar) {
-        let connection;
-
-        try {
-
-            connection = await oracledb.getConnection(dbConfig);
-
-            let produtcs = await connection.execute(`
+          let produtcs = await executeQuery(`
           SELECT
             PCPRODUT.DESCRICAO,
             PCTABPR.PTABELA,
+            PCEST.DTULTENT,
+            PCEST.DTULTSAIDA,
+            PCEST.QTULTENT,
             PCEST.QTESTGER,
+            PCEST.QTRESERV,
             PCPRODUT.EMBALAGEM,
             PCPRODUT.CODPROD,
             PCPRODUT.CODAUXILIAR
           FROM PCPRODUT
             JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
             JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.CODAUXILIAR = ${codebar} AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
-          `)
-      
-          return produtcs.rows;
+          WHERE PCPRODUT.DESCRICAO LIKE :descriptionMod AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+          ORDER BY PCPRODUT.DESCRICAO ${direction}
+          `, { descriptionMod })
 
-        } catch(err) {
-            console.error(err);
-        }finally {
-            if (connection) {
-                try {
-                    await connection.close();
-                } catch (err) {
-                    console.log(err);
-                }
-            }
-        }
+          return produtcs;
+    }
+
+    async findByCodeBar(codeBar) {
+
+        let produtc = await executeQuery(`
+        SELECT
+          PCPRODUT.DESCRICAO,
+          PCTABPR.PTABELA,
+          PCEST.DTULTENT,
+          PCEST.DTULTSAIDA,
+          PCEST.QTULTENT,
+          PCEST.QTESTGER,
+          PCEST.QTRESERV,
+          PCPRODUT.EMBALAGEM,
+          PCPRODUT.CODPROD,
+          PCPRODUT.CODAUXILIAR
+        FROM PCPRODUT
+        JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+        JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+        WHERE PCPRODUT.CODAUXILIAR = :codebar AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+      `, { codeBar })
+  
+      return produtc;
     }
 };
 

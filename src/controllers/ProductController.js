@@ -3,105 +3,65 @@ const ProductsRepository = require('../repositories/ProductsRepository.js');
 class ProductsController {
     
     async showByCode(req, res) {
+
         let { code } = req.params
-        await ProductsRepository.findByCode(code)
-        .then((product) => {
-            if(product.length !== 0 ){
-                product = product.map((item) => {
-                    return {
-                        description: item[0],
-                        value: item[1],
-                        quantity: item[2],
-                        embalagem: item[3],
-                        codprod: item[4],
-                        codebar: item[5]
-                    }
-                })
-                res.json({
-                    error: false,
-                    product: product
-                })
-            }else{
-                res.status(404).json({
-                    error: true,
-                    message: `Não existe produto com o código ${code}`,
-                })
-            }
-        }).catch(() => {
-            res.status(400).json({
-                error: true,
-                message: 'Não foi possível conectar ao banco de dados'
-            })  
+
+        let { metaData, rows } = await ProductsRepository.findByCode(code)
+        let [row] = rows
+
+        if(!row){
+            return res.status(404).json({ error: 'Produto não encontrado'})
+        }
+
+        let product = {}
+        row.forEach((item, index) => {
+            product[metaData[index].name] = item
         })
+
+        res.json(product)
     }
 
     async showByDescription(req, res) {
+
         let { description } = req.params
-        await ProductsRepository.findByDescription(description)
-        .then((products) => {
-            if(products.length > 0){
-                products = products.map(item => {
-                    return {
-                        description: item[0],
-                        value: item[1],
-                        quantity: item[2],
-                        embalagem: item[3],
-                        codprod: item[4],
-                        codebar: item[5]
-                    }
-                })
-                res.json({
-                    error: false,
-                    products
-                })
-            }else{
-                res.status(404).json({
-                    error: true,
-                    message: `Não existe produto com a descrição ${description}`,
-                })  
-            }
-        }).catch(() => {
-            res.status(400).json({
-                error: true,
-                message: 'Não foi possível conectar ao banco de dados'
-            })  
+        let { orderBy } = req.query
+
+        let { metaData, rows} = await ProductsRepository.findByDescription(description, orderBy)
+
+        let products = []
+
+        rows.forEach((item) => {
+            let prod = {}
+            item.forEach((value, index) => {
+                prod[metaData[index].name] = value
+            })
+            products.push(prod)
         })
+
+        res.json(products)
+
     }
 
     async showByCodeBar(req, res) {
-        let codeBar = req.params.codebar
+        
+        let { codebar: codeBar } = req.params
 
-        await ProductsRepository.findByCodeBar(codeBar)
-        .then((product) => {
-            if(product.length > 0) {
-                product = product.map(item => {
-                    return {
-                        description: item[0],
-                        value: item[1],
-                        quantity: item[2],
-                        embalagem: item[3],
-                        codprod: item[4],
-                        codebar: item[5]
-                    }
-                })
-                res.json(({
-                    error: false,
-                    product,                   
-                }))
-            }else {
-                res.status(404).json({
-                    error: true,
-                    message: `Não existe produto com o código de barras ${codeBar}`,                   
-                })
-            }
-        }).catch(() => {
-            res.status(400).json({
-                error: true,
-                message: 'Não foi possível conectar ao banco de dados'
-            })
+        let { metaData, rows } = await ProductsRepository.findByCodeBar(codeBar)
+        let [ row ] = rows
+
+        if(!row){
+            return res.status(404).json({ error: 'Produto não encontrado'})
+        }
+
+        let products = {}
+
+        row.forEach((item, index) => {
+            products[metaData[index].name] = item
         })
-    }
 
+        res.json(products)
+    
+    }
 }
 
 

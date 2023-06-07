@@ -8,4 +8,5 @@ router
     .get(`/${process.env.SECRET_API}/products/description/:description`, ProductsController.showByDescription)
     .get(`/${process.env.SECRET_API}/products/codebar/:codebar`, ProductsController.showByCodeBar)
 
+
 module.exports = router;
