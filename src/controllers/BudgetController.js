@@ -6,48 +6,29 @@ class BudgetController {
 
         let numberBudget = req.params.numberbudget
 
-        await BudgetsRepository.findByNumber(numberBudget)
-        .then(([budgetInfosMain, budgetInfosProds]) => {
-            if(budgetInfosMain.length > 0){
-                budgetInfosMain = budgetInfosMain.map(item => {
-                    return {
-                        codcli: item[0],
-                        data: item[1],
-                        vltotal: item[2],
-                        client: item[3],
-                        cnpj: item[4],
-                        obs: item[5]
-                    }
-                })
-                budgetInfosProds = budgetInfosProds.map(item => {
-                    return {
-                        codprod: item[0],
-                        description: item[1],
-                        quantity: item[2],
-                        package: item[3],
-                        value: item[4],
-                        codst: item[5],
-                        alq_icms: item[6],
-                        ncm: item[7]
-                    }
-                })
-                res.json({
-                    error: false,
-                    budgetInfosMain,
-                    budgetInfosProds
-                })
-            }else {
-                res.status(404).json({
-                    error: true,
-                    message: 'Não existe orçamento com o número ' + numberBudget
-                })
-            }
-        }).catch(() => {
-            res.status(400).json({
-                error: true,
-                message: `Não foi possível conectar ao banco de dados!`
-            })
+        let [ headersBudget, prodsBudget ] = await BudgetsRepository.findByNumber(numberBudget)
+
+        if(!prodsBudget.rows.length){
+            return res.status(404).json({ error: 'Orçamento não encontrado'})
+        }
+
+        let headers = {}
+        let products = []
+
+        headersBudget.metaData.forEach((item, index) => {
+            headers[item.name] = headersBudget.rows[0][index]
         })
+
+        prodsBudget.rows.forEach((item) => {
+            let prod = {}
+            item.forEach((value, index) => {
+                prod[prodsBudget.metaData[index].name] = value
+            })
+            products.push(prod)
+        })
+
+        res.json({ headers, products })
+
     }
 
 }

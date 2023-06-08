@@ -6,22 +6,28 @@ class SalesOrderController {
         
         let numberOrder = req.params.numberorder
 
-        let [ headerProds, infosProds ] = await SalesOrdersRepository.findByNumOrder(numberOrder)
+        let [ headerOrder, prodsOrder ] = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
-        let header = {}
+        if(!prodsOrder.rows.length){
+            return res.status(404).json({ error: 'Pedido de venda não encontrado'})
+        }
+
+        let headers = {}
         let products = []
 
-        headerProds.metaData.forEach((item, index) => {
-            header[item.name] = headerProds.rows[0][index]
+        headerOrder.metaData.forEach((item, index) => {
+            headers[item.name] = headerOrder.rows[0][index]
         })
 
-        infosProds.metaData.forEach((item, index) => {
+        prodsOrder.rows.forEach((item) => {
             let prod = {}
-            prod[item.name] = infosProds.rows[0][index]
+            item.forEach((value, index) => {
+                prod[prodsOrder.metaData[index].name] = value
+            })
             products.push(prod)
         })
 
-        res.json(products)
+        res.json({ headers, products })
 
     }
 }

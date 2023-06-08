@@ -4,7 +4,7 @@ class SalesOrdersRepository {
 
     async findByNumOrder(numberOrder) {
          
-      let orderInfosMain = await executeQuery(`
+      let headerOrder = await executeQuery(`
       SELECT 
         PCPEDC.NUMPED,
         PCPEDC.DATA,
@@ -31,7 +31,7 @@ class SalesOrdersRepository {
       WHERE PCPEDC.NUMPED = :numberOrder
       `, { numberOrder })
 
-      let orderInfosProducts = await executeQuery(`
+      let prodsOrder = await executeQuery(`
       SELECT
         PCPRODUT.DESCRICAO,
         PCPEDI.CODPROD,
@@ -56,7 +56,7 @@ class SalesOrdersRepository {
       WHERE PCPEDI.NUMPED = :numberOrder
       `, { numberOrder })
         
-      return [ orderInfosMain, orderInfosProducts ];
+      return [ headerOrder, prodsOrder ];
   }
 }
 

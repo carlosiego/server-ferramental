@@ -1,11 +1,12 @@
 require('dotenv').config()
+require('express-async-errors')
 const express = require('express')
 const oracledb = require('oracledb')
 const fs = require('fs')
 
-const productsRouter = require('./src/routes/productsRoutes')
-const salesOrdersRouter = require('./src/routes/salesOrdersRoutes')
-const budgetsRouter = require('./src/routes/budgetsRoutes')
+const productsRouter = require('./routes/productsRoutes')
+const salesOrdersRouter = require('./routes/salesOrdersRoutes')
+const budgetsRouter = require('./routes/budgetsRoutes')
 
 let libPath;
 if (process.platform === 'win32') {           // Windows
@@ -31,7 +32,13 @@ app.use((req, res, next) => {
     );
     next();
 });
-
 app.use(productsRouter, salesOrdersRouter, budgetsRouter)
+app.use((error, req, res, next) => {
+  console.log('============= ERROR HANDLER =============')
+  console.log(error)
+  res.sendStatus(500)
+})
 
-module.exports = app
+app.listen(process.env.PORT, () => {
+  console.log(`Servidor escutando em http://${process.env.SERVER_ADDRESS}:${process.env.PORT}`)
+})
