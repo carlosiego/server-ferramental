@@ -2,12 +2,13 @@
   "name": "server-products",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "src/index.js",
   "devDependencies": {
     "nodemon": "^2.0.21"
   },
   "scripts": {
-    "dev": "nodemon server.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "oracledb": "^5.5.0"
   }
 }
