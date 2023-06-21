@@ -49,7 +49,7 @@ class ProductsRepository {
           FROM PCPRODUT
             JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
             JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-          WHERE PCPRODUT.DESCRICAO LIKE :descriptionMod AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+          WHERE PCPRODUT.DESCRICAO LIKE :description AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
           ORDER BY PCPRODUT.DESCRICAO ${direction}
           `, { description })
 
