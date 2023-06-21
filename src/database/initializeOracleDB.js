@@ -1,12 +1,13 @@
 const oracledb = require('oracledb')
 const fs = require('fs')
+const path = require('path')
 
 function initializeOracleDB() {
     let libPath;
     if (process.platform === 'win32') {           // Windows
-      libPath = 'C:\\instantclient';
+      libPath = path.resolve('C:', 'oracle', 'instantclient');
     } else if (process.platform === 'linux') {   // Linux
-      libPath = process.env.HOME + '/Documentos/instantclient_linux';
+      libPath = path.resolve('home', process.env.NAME_SERVER, 'oracle', 'instantclient_linux');
     }
   
     if (libPath && fs.existsSync(libPath)) {

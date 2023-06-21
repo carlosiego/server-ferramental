@@ -1,4 +1,3 @@
-const connection = require('../database/dbConnection')
 const executeQuery = require('../database/executeQuery');
 
 const transformReqString = (description) => {
@@ -65,26 +64,27 @@ class ProductsRepository {
 
     async findByCodeBar(codeBar) {
 
-        let produtc = await executeQuery(`
-        SELECT
-          PCPRODUT.DESCRICAO,
-          PCTABPR.PTABELA,
-          PCEST.DTULTENT,
-          PCEST.DTULTSAIDA,
-          PCEST.QTULTENT,
-          PCEST.QTESTGER,
-          PCEST.QTRESERV,
-          PCPRODUT.EMBALAGEM,
-          PCPRODUT.CODPROD,
-          PCPRODUT.CODAUXILIAR
-        FROM PCPRODUT
-        JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
-        JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
-        WHERE PCPRODUT.CODAUXILIAR = :codebar AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
-      `, { codeBar })
-  
+      let produtc = await executeQuery(`
+      SELECT
+        PCPRODUT.DESCRICAO,
+        PCTABPR.PTABELA,
+        PCEST.DTULTENT,
+        PCEST.DTULTSAIDA,
+        PCEST.QTULTENT,
+        PCEST.QTESTGER,
+        PCEST.QTRESERV,
+        PCPRODUT.EMBALAGEM,
+        PCPRODUT.CODPROD,
+        PCPRODUT.CODAUXILIAR
+      FROM PCPRODUT
+      JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+      JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+      WHERE PCPRODUT.CODAUXILIAR = :codebar AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+    `, { codeBar })
+
       return produtc;
     }
+    
 };
 
 module.exports = new ProductsRepository();
