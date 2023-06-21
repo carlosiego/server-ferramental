@@ -1,14 +1,4 @@
-const connection = require('../database/dbConnection')
 const executeQuery = require('../database/executeQuery');
-
-const transformReqString = (description) => {
-    let descriptionMod = description.toUpperCase()
-    descriptionMod = descriptionMod.replaceAll(' ', '%')
-    if(descriptionMod.slice(-1) != '%'){
-        descriptionMod = descriptionMod + '%'
-    }
-    return descriptionMod
-};
 
 class ProductsRepository {
 
@@ -37,9 +27,12 @@ class ProductsRepository {
 
     async findByDescription(description, orderBy= 'ASC') {
 
-        let descriptionMod = transformReqString(description)
+        description = description.toUpperCase()
+        description = description.replaceAll(' ', '%')
+        description = description.endsWith('%') ? description : description + '%'
+
         let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
-        console.log(descriptionMod)
+        console.log(description)
     
           let produtcs = await executeQuery(`
           SELECT
@@ -58,7 +51,7 @@ class ProductsRepository {
             JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
           WHERE PCPRODUT.DESCRICAO LIKE :descriptionMod AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
           ORDER BY PCPRODUT.DESCRICAO ${direction}
-          `, { descriptionMod })
+          `, { description })
 
           return produtcs;
     }
