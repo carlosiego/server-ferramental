@@ -7,7 +7,7 @@ function initializeOracleDB() {
     if (process.platform === 'win32') {           // Windows
       libPath = path.resolve('C:', 'oracle', 'instantclient');
     } else if (process.platform === 'linux') {   // Linux
-      libPath = path.resolve('home', process.env.USER_SERVER, 'oracle', 'instantclient_linux');
+      libPath = path.resolve('/', 'home', process.env.USER_SERVER, 'oracle', 'instantclient_linux');
     }
   
     if (libPath && fs.existsSync(libPath)) {
