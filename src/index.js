@@ -3,7 +3,7 @@ require('express-async-errors')
 const express = require('express')
 const initializeOracleDB = require('./database/initializeOracleDB')
 initializeOracleDB()
-
+const compression = require('compression')
 const productsRouter = require('./routes/productsRoutes')
 const salesOrdersRouter = require('./routes/salesOrdersRoutes')
 const budgetsRouter = require('./routes/budgetsRoutes')
@@ -19,6 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(compression())
 app.use(productsRouter, salesOrdersRouter, budgetsRouter)
 
 app.use((error, req, res, next) => {
