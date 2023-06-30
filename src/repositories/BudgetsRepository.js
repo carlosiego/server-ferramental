@@ -2,22 +2,22 @@ const executeQuery = require('../database/executeQuery')
 
 class BudgetsRepository {
 
-  async findByNumber(numberBudget) {
+	async findByNumber(numberBudget) {
 
-    let headersBudget = await executeQuery(`
-      SELECT 
+		let headersBudget = await executeQuery(`
+      SELECT
         PCORCAVENDAC.CODCLI,
         PCORCAVENDAC.DATA,
         PCORCAVENDAC.VLTOTAL,
         PCORCAVENDAC.CLIENTE,
         PCORCAVENDAC.CNPJ,
         PCORCAVENDAC.OBS
-      FROM PCORCAVENDAC 
+      FROM PCORCAVENDAC
       WHERE PCORCAVENDAC.NUMORCA = :numberBudget
     `, { numberBudget })
 
-    let prodsBudget  = await executeQuery(`
-      SELECT 
+		let prodsBudget = await executeQuery(`
+      SELECT
         PCORCAVENDAI.CODPROD,
         PCPRODUT.DESCRICAO,
         PCORCAVENDAI.QT,
@@ -36,14 +36,14 @@ class BudgetsRepository {
         WHEN(PCORCAVENDAI.CODST IN (15)) THEN 0
         ELSE 0 END) AS ALIQ_ICMS,
         PCPRODUT.CODNCMEX
-      FROM PCORCAVENDAI 
+      FROM PCORCAVENDAI
       JOIN PCPRODUT ON PCPRODUT.CODPROD = PCORCAVENDAI.CODPROD
       WHERE PCORCAVENDAI.NUMORCA = :numberBudget
     `, { numberBudget })
 
-    return [ headersBudget, prodsBudget ];
+		return [headersBudget, prodsBudget];
 
-  }
+	}
 }
 
 module.exports = new BudgetsRepository()

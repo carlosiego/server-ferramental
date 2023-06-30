@@ -2,10 +2,10 @@ const executeQuery = require('../database/executeQuery')
 
 class SalesOrdersRepository {
 
-    async findByNumOrder(numberOrder) {
-         
-      let headerOrder = await executeQuery(`
-      SELECT 
+	async findByNumOrder(numberOrder) {
+
+		let headerOrder = await executeQuery(`
+      SELECT
         PCPEDC.NUMPED,
         PCPEDC.DATA,
         PCPEDC.VLTOTAL,
@@ -31,7 +31,7 @@ class SalesOrdersRepository {
       WHERE PCPEDC.NUMPED = :numberOrder
       `, { numberOrder })
 
-      let prodsOrder = await executeQuery(`
+		let prodsOrder = await executeQuery(`
       SELECT
         PCPRODUT.DESCRICAO,
         PCPEDI.CODPROD,
@@ -51,13 +51,13 @@ class SalesOrdersRepository {
         ELSE 0 END) AS ALIQ_ICMS,
         PCPRODUT.CODNCMEX
       FROM PCPEDI
-      JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDI.CODCLI 
+      JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDI.CODCLI
       JOIN PCPRODUT ON PCPRODUT.CODPROD = PCPEDI.CODPROD
       WHERE PCPEDI.NUMPED = :numberOrder
       `, { numberOrder })
-        
-      return [ headerOrder, prodsOrder ];
-  }
+
+		return [headerOrder, prodsOrder];
+	}
 }
 
 module.exports = new SalesOrdersRepository()

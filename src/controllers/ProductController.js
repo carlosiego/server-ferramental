@@ -1,67 +1,67 @@
 const ProductsRepository = require('../repositories/ProductsRepository.js');
 
 class ProductsController {
-    
-    async showByCode(req, res) {
 
-        let { code } = req.params
+	async showByCode(req, res) {
 
-        let { metaData, rows } = await ProductsRepository.findByCode(code)
-        let [row] = rows
+		let { code } = req.params
 
-        if(!row){
-            return res.status(404).json({ error: 'Produto não encontrado'})
-        }
+		let { metaData, rows } = await ProductsRepository.findByCode(code)
+		let [row] = rows
 
-        let product = {}
-        row.forEach((item, index) => {
-            product[metaData[index].name] = item
-        })
+		if (!row) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
 
-        res.json(product)
-    }
+		let product = {}
+		row.forEach((item, index) => {
+			product[metaData[index].name] = item
+		})
 
-    async showByDescription(req, res) {
+		res.json(product)
+	}
 
-        let { description } = req.params
-        let { orderBy } = req.query
+	async showByDescription(req, res) {
 
-        let { metaData, rows} = await ProductsRepository.findByDescription(description, orderBy)
+		let { description } = req.params
+		let { orderBy } = req.query
 
-        let products = []
+		let { metaData, rows } = await ProductsRepository.findByDescription(description, orderBy)
 
-        rows.forEach((item) => {
-            let prod = {}
-            item.forEach((value, index) => {
-                prod[metaData[index].name] = value
-            })
-            products.push(prod)
-        })
+		let products = []
 
-        res.json(products)
+		rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[metaData[index].name] = value
+			})
+			products.push(prod)
+		})
 
-    }
+		res.json(products)
 
-    async showByCodeBar(req, res) {
-        
-        let { codebar: codeBar } = req.params
+	}
 
-        let { metaData, rows } = await ProductsRepository.findByCodeBar(codeBar)
-        let [ row ] = rows
+	async showByCodeBar(req, res) {
 
-        if(!row){
-            return res.status(404).json({ error: 'Produto não encontrado'})
-        }
+		let { codebar: codeBar } = req.params
 
-        let products = {}
+		let { metaData, rows } = await ProductsRepository.findByCodeBar(codeBar)
+		let [row] = rows
 
-        row.forEach((item, index) => {
-            products[metaData[index].name] = item
-        })
+		if (!row) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
 
-        res.json(products)
-    
-    }
+		let products = {}
+
+		row.forEach((item, index) => {
+			products[metaData[index].name] = item
+		})
+
+		res.json(products)
+
+	}
 }
 
 
