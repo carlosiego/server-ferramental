@@ -62,6 +62,25 @@ class ProductsController {
 		res.json(products)
 
 	}
+
+	async showBySection(req, res) {
+
+		let { codesection: codeSection } = req.params
+
+		let { metaData, rows } = await ProductsRepository.findBySection(codeSection)
+
+		let products = []
+
+		rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[metaData[index].name] = value
+			})
+			products.push(prod)
+		})
+
+		res.json(products)
+	}
 }
 
 

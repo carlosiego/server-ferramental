@@ -82,6 +82,29 @@ class ProductsRepository {
 		return produtc;
 	}
 
+	async findBySection (codeSection) {
+		let products = await executeQuery(`
+		SELECT
+			PCPRODUT.DESCRICAO,
+			PCTABPR.PTABELA,
+			PCEST.DTULTENT,
+			PCEST.DTULTSAIDA,
+			PCEST.QTULTENT,
+			(PCEST.QTESTGER - PCEST.QTRESERV - PCEST.QTPENDENTE) AS QTDISPONIVEL,
+			PCEST.QTESTGER,
+			PCEST.QTRESERV,
+			PCPRODUT.EMBALAGEM,
+			PCPRODUT.CODPROD,
+			PCPRODUT.CODAUXILIAR
+		FROM PCPRODUT
+		JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+		JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+		WHERE PCPRODUT.CODSEC = :codesection AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+	`, { codeSection })
+
+	return products;
+	}
+
 };
 
 module.exports = new ProductsRepository();
