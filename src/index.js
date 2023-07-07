@@ -7,7 +7,6 @@ const compression = require('compression')
 const productsRouter = require('./routes/productsRoutes')
 const salesOrdersRouter = require('./routes/salesOrdersRoutes')
 const budgetsRouter = require('./routes/budgetsRoutes')
-const limit = require('./rateLimit')
 const limiter = require('./rateLimit')
 const app = express()
 

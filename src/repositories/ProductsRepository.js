@@ -7,6 +7,7 @@ class ProductsRepository {
 		let product = await executeQuery(`
       SELECT
         PCPRODUT.DESCRICAO,
+				PCPRODUT.INFORMACOESTECNICAS,
         PCTABPR.PTABELA,
         PCEST.DTULTENT,
         PCEST.DTULTSAIDA,
@@ -38,6 +39,7 @@ class ProductsRepository {
 		let produtcs = await executeQuery(`
           SELECT
             PCPRODUT.DESCRICAO,
+						PCPRODUT.INFORMACOESTECNICAS,
             PCTABPR.PTABELA,
             PCEST.DTULTENT,
             PCEST.DTULTSAIDA,
@@ -63,6 +65,7 @@ class ProductsRepository {
 		let produtc = await executeQuery(`
       SELECT
         PCPRODUT.DESCRICAO,
+				PCPRODUT.INFORMACOESTECNICAS,
         PCTABPR.PTABELA,
         PCEST.DTULTENT,
         PCEST.DTULTSAIDA,
@@ -86,6 +89,7 @@ class ProductsRepository {
 		let products = await executeQuery(`
 		SELECT
 			PCPRODUT.DESCRICAO,
+			PCPRODUT.INFORMACOESTECNICAS,
 			PCTABPR.PTABELA,
 			PCEST.DTULTENT,
 			PCEST.DTULTSAIDA,
