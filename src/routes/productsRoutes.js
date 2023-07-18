@@ -8,6 +8,6 @@ router
 	.get(`/products/description/:description`, ProductsController.showByDescription)
 	.get(`/products/codebar/:codebar`, ProductsController.showByCodeBar)
 	.get(`/products/codesection/:codesection`, ProductsController.showBySection)
-
+	.get(`/products/promotions`, ProductsController.showPromotions)
 
 module.exports = router;

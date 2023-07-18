@@ -81,6 +81,27 @@ class ProductsController {
 
 		res.json(products)
 	}
+
+	async showPromotions(req, res) {
+
+
+		let { metaData, rows } = await ProductsRepository.findPromotions()
+
+		// if(!rows) return res.status(404).json({ error: 'Não há promoções'})
+
+		let promotions = []
+
+		rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[metaData[index].name] = value
+			})
+			promotions.push(prod)
+		})
+
+		res.json(promotions)
+
+	}
 }
 
 

@@ -4,7 +4,12 @@ async function executeQuery(query, binds) {
 	const connection = await getConnection();
 
 	try {
-		const result = await connection.execute(query, binds);
+		let result;
+		if(binds){
+			result = await connection.execute(query, binds);
+		}else{
+			result = await connection.execute(query);
+		}
 		return result;
 	} catch (error) {
 		console.error('Error executing query:', error);
