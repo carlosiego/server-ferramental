@@ -1,6 +1,5 @@
 const SupplierRepository = require('../repositories/SupplierRepository')
 
-
 class SupplierController {
 
 	async showByCode(req, res) {
@@ -28,9 +27,9 @@ class SupplierController {
 
 	async showByName(req, res) {
 
-		let { supplier } = req.params
+		let { name } = req.params
 
-		let { metaData, rows } = await SupplierRepository.findByName(supplier)
+		let { metaData, rows } = await SupplierRepository.findByName(name)
 
 		if(!rows.length) return res.status(404).json({error: 'Fornecedor não encontrado'})
 
@@ -47,9 +46,25 @@ class SupplierController {
 		return res.json(suppliers)
 	}
 
+	async showByCnpj(req, res) {
+
+		let { cnpj } = req.params
+
+		let { metaData, rows } = await SupplierRepository.findByCnpj(cnpj)
+
+		if(!rows.length) return res.status(404).json({error: 'Fornecedor não encontrado'})
+
+		let [row] = rows
+		let supplier = {}
+
+		row.forEach((item, index) => {
+			supplier[metaData[index].name] = item
+		})
+
+		return res.json(supplier)
+	}
 
 
 }
-
 
 module.exports = new SupplierController()

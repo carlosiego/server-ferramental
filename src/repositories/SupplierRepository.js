@@ -18,11 +18,11 @@ class SupplierRepository {
 		return supplier;
 	}
 
-	async findByName(supplier) {
+	async findByName(name) {
 
-		supplier = supplier.toUpperCase()
-		supplier = supplier.replaceAll(' ', '%')
-		supplier = supplier.endsWith('%') ? supplier : supplier + '%'
+		name = name.toUpperCase()
+		name = name.replaceAll(' ', '%')
+		name = name.endsWith('%') ? name : name + '%'
 
 		let result = executeQuery(`
 		SELECT
@@ -31,11 +31,27 @@ class SupplierRepository {
 			PCFORNEC.CGC AS CNPJ,
 			PCFORNEC.FANTASIA
 		FROM PCFORNEC
-		WHERE PCFORNEC.FORNECEDOR LIKE :supplier
-		`, {supplier})
+		WHERE PCFORNEC.FORNECEDOR LIKE :name
+		`, {name})
 
 		return result;
 	}
+
+	async findByCnpj(cnpj) {
+
+		let supplier = executeQuery(`
+			SELECT
+				PCFORNEC.CODFORNEC AS CÓDIGO,
+				PCFORNEC.FORNECEDOR,
+				PCFORNEC.CGC AS CNPJ,
+				PCFORNEC.FANTASIA
+				FROM PCFORNEC
+			WHERE PCFORNEC.CGC = :cnpj
+		`, { cnpj })
+
+		return supplier;
+	}
+
 }
 
 module.exports = new SupplierRepository();

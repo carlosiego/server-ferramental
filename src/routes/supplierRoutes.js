@@ -5,6 +5,7 @@ const router = express.Router();
 
 router
 	.get(`/supplier/code/:code`, SupplierController.showByCode)
-	.get(`/supplier/:supplier`, SupplierController.showByName)
+	.get(`/supplier/name/:name`, SupplierController.showByName)
+	.get(`/supplier/cnpj/:cnpj`, SupplierController.showByCnpj)
 
 module.exports = router;
