@@ -102,6 +102,10 @@ class ProductsController {
 		res.json(promotions)
 
 	}
+
+	async showEstMin(req, res) {
+		return res.json('ok')
+	}
 }
 
 

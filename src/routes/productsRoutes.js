@@ -9,5 +9,6 @@ router
 	.get(`/products/codebar/:codebar`, ProductsController.showByCodeBar)
 	.get(`/products/codesection/:codesection`, ProductsController.showBySection)
 	.get(`/products/promotions`, ProductsController.showPromotions)
+	.get(`/products/estmin/cnpj/:cnpj`, ProductsController.showEstMin)
 
 module.exports = router;

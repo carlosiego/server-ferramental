@@ -7,6 +7,7 @@ const compression = require('compression')
 const productsRouter = require('./routes/productsRoutes')
 const salesOrdersRouter = require('./routes/salesOrdersRoutes')
 const budgetsRouter = require('./routes/budgetsRoutes')
+const supplierRouter = require('./routes/supplierRoutes')
 const limiter = require('./rateLimit')
 const app = express()
 
@@ -21,7 +22,7 @@ app.use((req, res, next) => {
 
 app.use(limiter)
 app.use(compression())
-app.use(productsRouter, salesOrdersRouter, budgetsRouter)
+app.use(productsRouter, salesOrdersRouter, budgetsRouter, supplierRouter)
 
 app.use((error, req, res, next) => {
 

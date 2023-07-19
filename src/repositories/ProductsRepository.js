@@ -154,6 +154,10 @@ class ProductsRepository {
 		return promotions
 	}
 
+	async findByEstMin() {
+		console.log('ok')
+	}
+
 };
 
 module.exports = new ProductsRepository();
