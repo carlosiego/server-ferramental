@@ -64,6 +64,26 @@ class SupplierController {
 		return res.json(supplier)
 	}
 
+	async showByFantasy(req, res) {
+
+		let { fantasy } = req.params
+
+		let { metaData, rows } = await SupplierRepository.findByFantasy(fantasy)
+
+		if(!rows.length) return res.status(404).json({error: 'Fornecedor não encontrado'})
+
+		let suppliers = []
+
+		rows.forEach((item) => {
+			let sup = {}
+			item.forEach((value, index) => {
+				sup[metaData[index].name] = value
+			})
+			suppliers.push(sup)
+		})
+
+		return res.json(suppliers)
+	}
 
 }
 

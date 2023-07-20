@@ -52,6 +52,25 @@ class SupplierRepository {
 		return supplier;
 	}
 
+	async findByFantasy(fantasy) {
+
+		fantasy = fantasy.toUpperCase()
+		fantasy = fantasy.replaceAll(' ', '%')
+		fantasy = fantasy.endsWith('%') ? fantasy : fantasy + '%'
+
+		let result = executeQuery(`
+		SELECT
+			PCFORNEC.CODFORNEC AS CÓDIGO,
+			PCFORNEC.FORNECEDOR,
+			PCFORNEC.CGC AS CNPJ,
+			PCFORNEC.FANTASIA
+		FROM PCFORNEC
+		WHERE PCFORNEC.FANTASIA LIKE :fantasy
+		`, {fantasy})
+
+		return result;
+	}
+
 }
 
 module.exports = new SupplierRepository();
