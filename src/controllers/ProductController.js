@@ -103,8 +103,26 @@ class ProductsController {
 
 	}
 
-	async showEstMin(req, res) {
-		return res.json('ok')
+	async showEstMinBySupplier(req, res) {
+
+		let { code } = req.params
+
+		let { metaData, rows } = await ProductsRepository.findEstMinBySupplier(code)
+
+		if(!rows.length) return res.status(404).json({error: 'Fornecedor não encontrado'})
+
+		let products = []
+
+		rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[metaData[index].name] = value
+			})
+			products.push(prod)
+		})
+
+		return res.json(products)
+
 	}
 }
 
