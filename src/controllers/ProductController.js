@@ -104,9 +104,9 @@ class ProductsController {
 	async showPromotions(req, res) {
 
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
-		let productsFromCache = await client.get(fullUrl)
-		if(productsFromCache) {
-			return res.json(JSON.parse(productsFromCache))
+		let promotionsFromCache = await client.get(fullUrl)
+		if(promotionsFromCache) {
+			return res.json(JSON.parse(promotionsFromCache))
 		}
 		
 		let { metaData, rows } = await ProductsRepository.findPromotions()
@@ -132,6 +132,12 @@ class ProductsController {
 
 		let { code } = req.params
 
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
+
 		let { metaData, rows } = await ProductsRepository.findEstMinBySupplier(code)
 
 		if(!rows.length) return res.status(404).json({error: 'Fornecedor não encontrado'})
@@ -145,7 +151,7 @@ class ProductsController {
 			})
 			products.push(prod)
 		})
-
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		return res.json(products)
 
 	}
