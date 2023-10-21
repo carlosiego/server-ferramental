@@ -1,11 +1,16 @@
 const ProductsRepository = require('../repositories/ProductsRepository.js');
+const client = require('../redis')
 
 class ProductsController {
 
 	async showByCode(req, res) {
 
 		let { code } = req.params
-
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		const productFromCache = await client.get(fullUrl)
+		if (productFromCache) {
+			return res.json(JSON.parse(productFromCache))
+		}
 		let { metaData, rows } = await ProductsRepository.findByCode(code)
 		let [row] = rows
 
@@ -17,7 +22,7 @@ class ProductsController {
 		row.forEach((item, index) => {
 			product[metaData[index].name] = item
 		})
-
+		await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION })
 		res.json(product)
 	}
 
