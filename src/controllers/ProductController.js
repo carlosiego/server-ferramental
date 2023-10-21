@@ -81,7 +81,11 @@ class ProductsController {
 	async showBySection(req, res) {
 
 		let { codesection: codeSection } = req.params
-
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
 		let { metaData, rows } = await ProductsRepository.findBySection(codeSection)
 
 		let products = []
@@ -93,7 +97,7 @@ class ProductsController {
 			})
 			products.push(prod)
 		})
-
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
 	}
 
