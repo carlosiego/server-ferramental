@@ -168,6 +168,24 @@ class ProductsRepository {
 	return products;
 	}
 
+	async findMinimumBySection(codeSection) {
+
+		let products = await executeQuery(`
+		SELECT
+			PCPRODUT.CODPROD,
+			PCPRODUT.DESCRICAO,
+			PCTABPR.PTABELA,
+			(PCEST.QTESTGER - PCEST.QTRESERV - PCEST.QTPENDENTE) AS QTDISPONIVEL,
+			PCPRODUT.EMBALAGEM
+		FROM PCPRODUT
+		JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+		JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+		WHERE PCPRODUT.CODSEC = :codesection AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+	`, { codeSection })
+
+	return products;
+	}
+
 	async findPromotions() {
 
 		let promotions = await executeQuery(`
