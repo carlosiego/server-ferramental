@@ -15,7 +15,7 @@ class ProductsController {
 		let [row] = rows
 
 		if (!row) {
-			await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION })
+			await client.set(fullUrl, JSON.stringify({ error: 'Produto não encontrado' }), { EX: process.env.EXPIRATION })
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
@@ -64,7 +64,7 @@ class ProductsController {
 		let [row] = rows
 
 		if (!row) {
-			await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION })
+			await client.set(fullUrl, JSON.stringify({ error: 'Produto não encontrado' }), { EX: process.env.EXPIRATION })
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
@@ -143,7 +143,7 @@ class ProductsController {
 		let { metaData, rows } = await ProductsRepository.findEstMinBySupplier(code)
 
 		if(!rows.length) {
-			await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
+			await client.set(fullUrl, JSON.stringify({error: 'Fornecedor não encontrado'}), { EX: process.env.EXPIRATION})
 			return res.status(404).json({error: 'Fornecedor não encontrado'})
 		}
 		let products = []
