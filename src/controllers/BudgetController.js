@@ -1,4 +1,5 @@
 const BudgetsRepository = require('../repositories/BudgetsRepository')
+const client = require('../redis')
 
 class BudgetController {
 
