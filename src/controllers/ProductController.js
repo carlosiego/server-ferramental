@@ -54,7 +54,11 @@ class ProductsController {
 	async showByCodeBar(req, res) {
 
 		let { codebar: codeBar } = req.params
-
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
 		let { metaData, rows } = await ProductsRepository.findByCodeBar(codeBar)
 		let [row] = rows
 
@@ -67,6 +71,8 @@ class ProductsController {
 		row.forEach((item, index) => {
 			products[metaData[index].name] = item
 		})
+
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 
 		res.json(products)
 
