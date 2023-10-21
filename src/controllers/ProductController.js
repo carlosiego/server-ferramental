@@ -123,7 +123,7 @@ class ProductsController {
 			promotions.push(prod)
 		})
 
-		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
+		await client.set(fullUrl, JSON.stringify(promotions), { EX: process.env.EXPIRATION})
 		res.json(promotions)
 
 	}
