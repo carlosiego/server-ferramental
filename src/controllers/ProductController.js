@@ -52,6 +52,31 @@ class ProductsController {
 
 	}
 
+	async showMinimumByDescription(req, res) {
+
+		let { description } = req.params
+		let { orderBy } = req.query
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
+		let { metaData, rows } = await ProductsRepository.findMinimumByDescription(description, orderBy)
+
+		let products = []
+
+		rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[metaData[index].name] = value
+			})
+			products.push(prod)
+		})
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
+		res.json(products)
+
+	}
+
 	async showByCodeBar(req, res) {
 
 		let { codebar: codeBar } = req.params

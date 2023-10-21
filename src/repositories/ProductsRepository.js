@@ -76,6 +76,32 @@ class ProductsRepository {
 		return produtcs;
 	}
 
+	async findMinimumByDescription(description, orderBy = 'ASC') {
+
+		description = description.toUpperCase()
+		description = description.replaceAll(' ', '%')
+		description = description.endsWith('%') ? description : description + '%'
+
+		let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
+		console.log(description)
+
+		let produtcs = await executeQuery(`
+			SELECT
+				PCPRODUT.CODPROD,
+				PCPRODUT.DESCRICAO,
+				PCTABPR.PTABELA,
+				(PCEST.QTESTGER - PCEST.QTRESERV - PCEST.QTPENDENTE) AS QTDISPONIVEL,
+				PCPRODUT.EMBALAGEM,
+			FROM PCPRODUT
+				JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+				JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+				WHERE PCPRODUT.DESCRICAO LIKE :description AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+				ORDER BY PCPRODUT.DESCRICAO ${direction}
+			`, { description })
+
+		return produtcs;
+	}
+
 	async findByCodeBar(codeBar) {
 
 		let produtc = await executeQuery(`

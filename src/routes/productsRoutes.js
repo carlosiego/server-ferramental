@@ -6,6 +6,7 @@ const router = express.Router();
 router
 	.get(`/products/code/:code`, ProductsController.showByCode)
 	.get(`/products/description/:description`, ProductsController.showByDescription)
+	.get(`/products/minimum/description/:description`, ProductsController.showMinimumByDescription)
 	.get(`/products/codebar/:codebar`, ProductsController.showByCodeBar)
 	.get(`/products/codesection/:codesection`, ProductsController.showBySection)
 	.get(`/products/promotions`, ProductsController.showPromotions)
