@@ -103,10 +103,15 @@ class ProductsController {
 
 	async showPromotions(req, res) {
 
-
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
+		
 		let { metaData, rows } = await ProductsRepository.findPromotions()
 
-		// if(!rows) return res.status(404).json({ error: 'Não há promoções'})
+		if(!rows) return res.json([])
 
 		let promotions = []
 
@@ -118,6 +123,7 @@ class ProductsController {
 			promotions.push(prod)
 		})
 
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(promotions)
 
 	}
