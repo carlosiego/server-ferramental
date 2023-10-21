@@ -7,7 +7,7 @@ class ProductsController {
 
 		let { code } = req.params
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
-		const productFromCache = await client.get(fullUrl)
+		let productFromCache = await client.get(fullUrl)
 		if (productFromCache) {
 			return res.json(JSON.parse(productFromCache))
 		}
@@ -30,7 +30,11 @@ class ProductsController {
 
 		let { description } = req.params
 		let { orderBy } = req.query
-
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
 		let { metaData, rows } = await ProductsRepository.findByDescription(description, orderBy)
 
 		let products = []
@@ -42,7 +46,7 @@ class ProductsController {
 			})
 			products.push(prod)
 		})
-
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
 
 	}
