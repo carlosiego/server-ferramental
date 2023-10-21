@@ -9,7 +9,7 @@ class ProductsController {
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productFromCache = await client.get(fullUrl)
 		if (productFromCache) {
-			return res.status(404).json(JSON.parse(productFromCache))
+			return res.json(JSON.parse(productFromCache))
 		}
 		let { metaData, rows } = await ProductsRepository.findByCode(code)
 		let [row] = rows
