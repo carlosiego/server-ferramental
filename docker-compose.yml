@@ -1,12 +1,13 @@
 version: '3'
 services:
  redis:
- image: redis:7.2.2
- ports:
-  - "6379:6379"
- restart: always
- volumes:
-  - "redis_data:/data"
+  container_name: redis-cache
+  image: redis:7.2.2
+  ports:
+   - "6379:6379"
+  restart: always
+  volumes:
+   - "redis_data:/data"
 volumes:
   redis_data:
 
