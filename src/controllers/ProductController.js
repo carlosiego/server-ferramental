@@ -105,6 +105,34 @@ class ProductsController {
 
 	}
 
+	async showMinimumByCodeBar(req, res) {
+
+		let { codebar: codeBar } = req.params
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productsFromCache = await client.get(fullUrl)
+		if(productsFromCache) {
+			return res.json(JSON.parse(productsFromCache))
+		}
+		let { metaData, rows } = await ProductsRepository.findMinimumByCodeBar(codeBar)
+		let [row] = rows
+
+		if (!row) {
+			await client.set(fullUrl, JSON.stringify({ error: 'Produto não encontrado' }), { EX: process.env.EXPIRATION })
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
+
+		let products = {}
+
+		row.forEach((item, index) => {
+			products[metaData[index].name] = item
+		})
+
+		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
+
+		res.json(products)
+
+	}
+
 	async showBySection(req, res) {
 
 		let { codesection: codeSection } = req.params
@@ -158,7 +186,7 @@ class ProductsController {
 		if(promotionsFromCache) {
 			return res.json(JSON.parse(promotionsFromCache))
 		}
-		
+
 		let { metaData, rows } = await ProductsRepository.findPromotions()
 
 		if(!rows) return res.json([])

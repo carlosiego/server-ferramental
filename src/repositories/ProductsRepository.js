@@ -140,6 +140,26 @@ class ProductsRepository {
 		return produtc;
 	}
 
+	async findMinimumByCodeBar(codeBar) {
+
+		let produtc = await executeQuery(`
+      SELECT
+				PCPRODUT.CODPROD,
+        PCPRODUT.DESCRICAO,
+        PCTABPR.PTABELA,
+        (PCEST.QTESTGER - PCEST.QTRESERV - PCEST.QTPENDENTE) AS QTDISPONIVEL,
+        PCPRODUT.EMBALAGEM,
+				NVL(REGEXP_SUBSTR(PCPRODUT.DIRFOTOPROD, '[^\\]+$'), 'not-found.png') AS DIRFOTOPROD
+      FROM PCEMBALAGEM
+      JOIN PCPRODUT ON PCPRODUT.CODPROD = PCEMBALAGEM.CODPROD
+			JOIN PCTABPR ON PCTABPR.CODPROD = PCPRODUT.CODPROD
+			JOIN PCEST ON PCEST.CODPROD = PCPRODUT.CODPROD
+      WHERE PCEMBALAGEM.CODAUXILIAR = :codebar AND PCPRODUT.REVENDA != 'N' AND PCPRODUT.OBS2 != 'FL'
+    `, { codeBar })
+
+		return produtc;
+	}
+
 	async findBySection(codeSection) {
 
 		let products = await executeQuery(`

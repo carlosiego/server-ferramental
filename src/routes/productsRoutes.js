@@ -8,6 +8,7 @@ router
 	.get(`/products/description/:description`, ProductsController.showByDescription)
 	.get(`/products/minimum/description/:description`, ProductsController.showMinimumByDescription)
 	.get(`/products/codebar/:codebar`, ProductsController.showByCodeBar)
+	.get(`/products/minimum/codebar/:codebar`, ProductsController.showMinimumByCodeBar)
 	.get(`/products/codesection/:codesection`, ProductsController.showBySection)
 	.get(`/products/minimum/codesection/:codesection`, ProductsController.showMinimumBySection)
 	.get(`/products/promotions`, ProductsController.showPromotions)
