@@ -44,7 +44,6 @@ class ProductsRepository {
 		description = description.endsWith('%') ? description : description + '%'
 
 		let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
-		console.log(description)
 
 		let produtcs = await executeQuery(`
 			SELECT

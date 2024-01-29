@@ -38,6 +38,10 @@ class ProductsController {
 		}
 		let { metaData, rows } = await ProductsRepository.findByDescription(description, orderBy)
 
+		if(!rows.length) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
+
 		let products = []
 
 		rows.forEach((item) => {
@@ -47,6 +51,7 @@ class ProductsController {
 			})
 			products.push(prod)
 		})
+
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
 
