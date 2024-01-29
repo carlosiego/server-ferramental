@@ -105,7 +105,7 @@ class ProductsController {
 		let products = {}
 
 		row.forEach((item, index) => {
-			products[metaData[index].name] = item
+			products[metaData[index]?.name] = item
 		})
 
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
@@ -151,6 +151,10 @@ class ProductsController {
 			return res.json(JSON.parse(productsFromCache))
 		}
 		let { metaData, rows } = await ProductsRepository.findBySection(codeSection)
+
+		if(!rows.length) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
 
 		let products = []
 
