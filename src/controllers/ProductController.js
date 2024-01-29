@@ -179,6 +179,10 @@ class ProductsController {
 		}
 		let { metaData, rows } = await ProductsRepository.findMinimumBySection(codeSection)
 
+		if(!rows.length) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
+
 		let products = []
 
 		rows.forEach((item) => {
