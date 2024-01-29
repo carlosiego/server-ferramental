@@ -206,6 +206,10 @@ class ProductsController {
 
 		let { metaData, rows } = await ProductsRepository.findPromotions()
 
+		if(!rows.length) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
+
 		if(!rows) return res.json([])
 
 		let promotions = []
