@@ -46,14 +46,16 @@ class SalesOrderController {
 
 		let numberOrder = req.params.numberorder
 
-		let saleOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
+		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
-		if (saleOrder.length === 0) {
+		if (salesOrder.length === 0) {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
 		await SalesOrdersRepository.changePosition(numberOrder)
-
+		console.log('---------------------------------------------------------------------')
+		console.log(salesOrder.headerOrder)
+		console.log('---------------------------------------------------------------------')
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
 }

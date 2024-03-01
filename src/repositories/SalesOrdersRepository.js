@@ -78,7 +78,7 @@ class SalesOrdersRepository {
 			WHERE NUMPED = :numberOrder
 		`, { numberOrder })
 
-		console.log({ PCPEDC, PCPEDI})
+		// console.log({ PCPEDC, PCPEDI})
 	}
 }
 
