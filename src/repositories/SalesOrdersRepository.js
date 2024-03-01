@@ -31,6 +31,10 @@ class SalesOrdersRepository {
       WHERE PCPEDC.NUMPED = :numberOrder
       `, { numberOrder })
 
+		if(headerOrder.rows.length === 0) {
+			return []
+		}
+
 		let prodsOrder = await executeQuery(`
       SELECT
         PCPRODUT.DESCRICAO,
@@ -57,7 +61,24 @@ class SalesOrdersRepository {
       WHERE PCPEDI.NUMPED = :numberOrder
       `, { numberOrder })
 
-		return [headerOrder, prodsOrder];
+		return { headerOrder, prodsOrder };
+	}
+
+	async changePosition(numberOrder){
+
+		let PCPEDC = await executeQuery(`
+			UPDATE PCPEDC
+			SET POSICAO = 'L'
+			WHERE NUMPED = :numberOrder
+		`, { numberOrder })
+
+		let PCPEDI = await executeQuery(`
+			UPDATE PCPEDI
+			SET POSICAO = 'L'
+			WHERE NUMPED = :numberOrder
+		`, { numberOrder })
+
+		console.log({ PCPEDC, PCPEDI})
 	}
 }
 

@@ -8,7 +8,7 @@ async function getConnection() {
 		const connection = await oracledb.getConnection();
 		return connection;
 	} catch (error) {
-		console.error('Erro ao estabelecer conexão com o banco de dados:', error);
+		console.error('Erro ao estabelecer conexão com o banco de dados: ', error);
 	}
 }
 

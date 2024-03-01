@@ -13,12 +13,14 @@ class SalesOrderController {
 			return res.json(JSON.parse(salesOrderFromCache))
 		}
 
-		let [headerOrder, prodsOrder] = await SalesOrdersRepository.findByNumOrder(numberOrder)
+		let saleOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
-		if (!prodsOrder.rows.length) {
+		if (saleOrder.length === 0) {
 			await client.set(fullUrl, JSON.stringify({ error: 'Pedido de venda não encontrado' }), { EX: process.env.EXPIRATION})
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
+
+		let { headerOrder, prodsOrder } = saleOrder
 
 		let headers = {}
 		let products = []
@@ -38,6 +40,21 @@ class SalesOrderController {
 		await client.set(fullUrl, JSON.stringify({ headers, products }), { EX: process.env.EXPIRATION})
 		res.json({ headers, products })
 
+	}
+
+	async changePosition(req, res) {
+
+		let numberOrder = req.params.numberorder
+
+		let saleOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
+
+		if (saleOrder.length === 0) {
+			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
+		}
+
+		await SalesOrdersRepository.changePosition(numberOrder)
+
+		res.json({ message: 'Pedido liberado com sucesso'})
 	}
 }
 
