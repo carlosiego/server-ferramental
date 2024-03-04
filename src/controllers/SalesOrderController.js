@@ -1,5 +1,6 @@
-const SalesOrdersRepository = require('../repositories/SalesOrdersRepository')
-const client = require('../redis')
+const SalesOrdersRepository = require('../repositories/SalesOrdersRepository');
+const client = require('../redis');
+const isDate = require('../utils/isDate')
 
 class SalesOrderController {
 
@@ -42,6 +43,33 @@ class SalesOrderController {
 
 	}
 
+	async showByRca(req, res) {
+
+		let { rca } = req.params
+		let { initialDate, finalDate, position } = req.query
+		rca = Number(rca)
+
+		if(!rca) {
+			return res.status(400).json({ message: 'Rca inválido, tem que ser do tipo número'})
+		}
+
+		if(!initialDate || !finalDate || !position){
+			return res.status(422).json({ message: 'Faltam Informações'});
+		}
+
+		if(!isDate(initialDate) || !isDate(finalDate)) {
+			return res.status(400).json({ message: 'Data com formato inválido, envie no formato YYYY-MM-DD'})
+		}
+
+		let { headerOrders, prodsOrder} = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
+
+		if(!headerOrders.rows.length) {
+			return res.json([])
+		}
+
+		return res.json({ headerOrders, prodsOrder});
+	}
+
 	async changePosition(req, res) {
 
 		let numberOrder = req.params.numberorder
@@ -53,11 +81,9 @@ class SalesOrderController {
 		}
 
 		await SalesOrdersRepository.changePosition(numberOrder)
-		console.log('---------------------------------------------------------------------')
-		console.log(salesOrder.headerOrder)
-		console.log('---------------------------------------------------------------------')
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
+
 }
 
 module.exports = new SalesOrderController()
