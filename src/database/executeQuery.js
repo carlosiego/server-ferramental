@@ -11,7 +11,7 @@ async function executeQuery(query, binds) {
 		if(binds){
 			result = await connection.execute(query, binds, options);
 		}else{
-			result = await connection.execute(query, binds, options);
+			result = await connection.execute(query);
 		}
 		return result;
 	} catch (error) {

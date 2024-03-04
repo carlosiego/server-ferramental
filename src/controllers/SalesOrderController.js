@@ -1,6 +1,7 @@
 const SalesOrdersRepository = require('../repositories/SalesOrdersRepository');
 const client = require('../redis');
 const isDate = require('../utils/isDate')
+const moment = require('moment')
 
 class SalesOrderController {
 
@@ -49,25 +50,21 @@ class SalesOrderController {
 		let { initialDate, finalDate, position } = req.query
 		rca = Number(rca)
 
-		if(!rca) {
-			return res.status(400).json({ message: 'Rca inválido, tem que ser do tipo número'})
+		if(!isDate(initialDate) || !isDate(finalDate) || !position || !rca) {
+			return res.status(400).json({ message: `Informações inválidas ou faltando.`})
 		}
 
-		if(!initialDate || !finalDate || !position){
-			return res.status(422).json({ message: 'Faltam Informações'});
+		if(moment(initialDate).isAfter(finalDate)){
+			return res.status(400).json({ message: 'Data inicial não pode ser maior que a final.'})
 		}
 
-		if(!isDate(initialDate) || !isDate(finalDate)) {
-			return res.status(400).json({ message: 'Data com formato inválido, envie no formato YYYY-MM-DD'})
-		}
-
-		let { headerOrders, prodsOrder} = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
+		let { headerOrders } = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
 
 		if(!headerOrders.rows.length) {
 			return res.json([])
 		}
 
-		return res.json({ headerOrders, prodsOrder});
+		return res.json({ headerOrders });
 	}
 
 	async changePosition(req, res) {
