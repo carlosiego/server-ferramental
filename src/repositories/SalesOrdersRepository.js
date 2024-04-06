@@ -82,7 +82,7 @@ class SalesOrdersRepository {
 
 	async findByRca({ rca, initialDate, finalDate, position }) {
 
-		let headerOrders = await executeQuery(`
+		let salesOrder = await executeQuery(`
 			SELECT
 			PCPEDC.NUMPED,
 			PCPEDC.DATA,
@@ -111,7 +111,7 @@ class SalesOrdersRepository {
 			AND POSICAO = :position
 		`, { rca, initialDate, finalDate, position })
 
-		return { headerOrders }
+		return salesOrder
 
 	}
 }
