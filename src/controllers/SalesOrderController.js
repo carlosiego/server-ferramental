@@ -58,13 +58,11 @@ class SalesOrderController {
 			return res.status(400).json({ message: 'Data inicial não pode ser maior que a final.'})
 		}
 
-		let { headerOrders } = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
+		let { headerOrders: { metaData , rows } } = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
 
-		if(!headerOrders.rows.length) {
-			return res.json([])
-		}
+		console.log({ metaData, rows})
 
-		return res.json({ headerOrders });
+		return res.json({ metaData, rows });
 	}
 
 	async changePosition(req, res) {

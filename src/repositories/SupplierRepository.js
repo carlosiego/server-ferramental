@@ -4,7 +4,7 @@ class SupplierRepository {
 
 	async findByCode(code) {
 
-		let supplier = executeQuery(`
+		let supplier = await executeQuery(`
 			SELECT
 				PCFORNEC.CODFORNEC AS CÓDIGO,
 				PCFORNEC.FORNECEDOR,
@@ -24,7 +24,7 @@ class SupplierRepository {
 		name = name.replaceAll(' ', '%')
 		name = name.endsWith('%') ? name : name + '%'
 
-		let result = executeQuery(`
+		let result = await executeQuery(`
 		SELECT
 			PCFORNEC.CODFORNEC AS CÓDIGO,
 			PCFORNEC.FORNECEDOR,
@@ -39,7 +39,7 @@ class SupplierRepository {
 
 	async findByCnpj(cnpj) {
 
-		let supplier = executeQuery(`
+		let supplier = await executeQuery(`
 			SELECT
 				PCFORNEC.CODFORNEC AS CÓDIGO,
 				PCFORNEC.FORNECEDOR,
@@ -58,7 +58,7 @@ class SupplierRepository {
 		fantasy = fantasy.replaceAll(' ', '%')
 		fantasy = fantasy.endsWith('%') ? fantasy : fantasy + '%'
 
-		let result = executeQuery(`
+		let result = await executeQuery(`
 		SELECT
 			PCFORNEC.CODFORNEC AS CÓDIGO,
 			PCFORNEC.FORNECEDOR,
