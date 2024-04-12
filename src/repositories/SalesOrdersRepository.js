@@ -9,6 +9,7 @@ class SalesOrdersRepository {
         PCPEDC.NUMPED,
         PCPEDC.DATA,
         PCPEDC.VLTOTAL,
+				PCPEDC.VLTABELA,
         PCPEDC.CODCLI,
         PCCLIENT.CLIENTE,
         PCPEDC.POSICAO,
@@ -41,6 +42,7 @@ class SalesOrdersRepository {
         PCPEDI.CODPROD,
         PCPEDI.QT,
         PCPEDI.PVENDA,
+				PCPEDI.PTABELA,
         PCPEDI.CODST,
         (CASE WHEN(PCPEDI.CODST IN (5)) THEN 19
         WHEN(PCPEDI.CODST IN (6)) THEN 12
@@ -87,6 +89,7 @@ class SalesOrdersRepository {
 			PCPEDC.NUMPED,
 			PCPEDC.DATA,
 			PCPEDC.VLTOTAL,
+			PCPEDC.VLTABELA,
 			PCPEDC.CODCLI,
 			PCCLIENT.CLIENTE,
 			PCPEDC.POSICAO,
