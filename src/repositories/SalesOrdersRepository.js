@@ -66,17 +66,22 @@ class SalesOrdersRepository {
 		return { headerOrder, prodsOrder };
 	}
 
-	async changePosition(numberOrder){
+	async changePosition({ numberOrder, hours, minutes, seconds, date }){
+
+		console.log({ numberOrder, hours, minutes, seconds, date })
 
 		await executeQuery(`
 			UPDATE PCPEDC
-			SET POSICAO = 'L'
+			SET POSICAO = 'M',
+			DTLIBERA = to_date ('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+			HORALIBERA = :hours,
+			MINUTOLIBERA = :minutes
 			WHERE NUMPED = :numberOrder
-		`, { numberOrder })
+		`, { hours, minutes, numberOrder })
 
 		await executeQuery(`
 			UPDATE PCPEDI
-			SET POSICAO = 'L'
+			SET POSICAO = 'M'
 			WHERE NUMPED = :numberOrder
 		`, { numberOrder })
 

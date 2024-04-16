@@ -78,6 +78,15 @@ class SalesOrderController {
 	async changePosition(req, res) {
 
 		let numberOrder = req.params.numberorder
+		let { hours, minutes, seconds, date } = req.query
+
+		hours = Number(hours)
+		minutes = Number(minutes)
+		seconds = Number(seconds)
+
+		if(typeof(hours) !== 'number' || typeof(minutes) !== 'number' || typeof(seconds) !== 'number' || date[4] !== '-') {
+			return res.json({ message: 'Dados inválidos'})
+		}
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
@@ -85,10 +94,9 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		await SalesOrdersRepository.changePosition(numberOrder)
+		await SalesOrdersRepository.changePosition({ numberOrder, hours, minutes, seconds, date })
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
-
 }
 
 module.exports = new SalesOrderController()
