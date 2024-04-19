@@ -7,6 +7,7 @@ class SalesOrdersRepository {
 		let headerOrder = await executeQuery(`
       SELECT
         PCPEDC.NUMPED,
+        PCPEDC.ORIGEMPED,
         PCPEDC.DATA,
         PCPEDC.VLTOTAL,
 				PCPEDC.VLTABELA,
@@ -66,24 +67,23 @@ class SalesOrdersRepository {
 		return { headerOrder, prodsOrder };
 	}
 
-	async changePosition({ numberOrder, hours, minutes, seconds, date }){
-
-		console.log({ numberOrder, hours, minutes, seconds, date })
+	async changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position }){
 
 		await executeQuery(`
 			UPDATE PCPEDC
-			SET POSICAO = 'M',
+			SET POSICAO = :position,
 			DTLIBERA = to_date ('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+			CODFUNCLIBERA = 48,
 			HORALIBERA = :hours,
 			MINUTOLIBERA = :minutes
 			WHERE NUMPED = :numberOrder
-		`, { hours, minutes, numberOrder })
+		`, { position, hours, minutes, numberOrder })
 
 		await executeQuery(`
 			UPDATE PCPEDI
-			SET POSICAO = 'M'
+			SET POSICAO = :position
 			WHERE NUMPED = :numberOrder
-		`, { numberOrder })
+		`, { numberOrder, position })
 
 	}
 
@@ -92,6 +92,7 @@ class SalesOrdersRepository {
 		let salesOrder = await executeQuery(`
 			SELECT
 			PCPEDC.NUMPED,
+			PCPEDC.ORIGEMPED,
 			PCPEDC.DATA,
 			PCPEDC.VLTOTAL,
 			PCPEDC.VLTABELA,

@@ -75,10 +75,18 @@ class SalesOrderController {
 		return res.json(sales);
 	}
 
-	async changePosition(req, res) {
+	async modifyPositionOfTelemarketing(req, res) {
 
 		let numberOrder = req.params.numberorder
-		let { hours, minutes, seconds, date } = req.query
+		let { hours, minutes, seconds, date, position } = req.query
+
+		if (!hours || !minutes || !seconds || !date || !position) {
+			return res.status(400).json({ message: 'Informações incompletas'})
+		}
+
+		if(!["M", "L"].includes(position)) {
+			return res.status(404).json({ message: "Posição Inválida" })
+		}
 
 		hours = Number(hours)
 		minutes = Number(minutes)
@@ -94,7 +102,7 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		await SalesOrdersRepository.changePosition({ numberOrder, hours, minutes, seconds, date })
+		await SalesOrdersRepository.changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position })
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
 }
