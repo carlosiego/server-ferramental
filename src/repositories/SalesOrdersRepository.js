@@ -72,10 +72,32 @@ class SalesOrdersRepository {
 		await executeQuery(`
 			UPDATE PCPEDC
 			SET POSICAO = :position,
-			DTLIBERA = to_date ('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+			DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
 			CODFUNCLIBERA = 48,
 			HORALIBERA = :hours,
 			MINUTOLIBERA = :minutes
+			WHERE NUMPED = :numberOrder
+		`, { position, hours, minutes, numberOrder })
+
+		await executeQuery(`
+			UPDATE PCPEDI
+			SET POSICAO = :position
+			WHERE NUMPED = :numberOrder
+		`, { numberOrder, position })
+
+	}
+
+	async changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position }){
+
+		await executeQuery(`
+			UPDATE PCPEDC
+			SET POSICAO = :position,
+			DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+			CODFUNCLIBERA = 48,
+			HORALIBERA = :hours,
+			MINUTOLIBERA = :minutes,
+			IMPORTADO = 'N',
+			NUMCAR = (SELECT * FROM (SELECT NUMCAR FROM PCPEDC ORDER BY NUMCAR DESC) WHERE ROWNUM = 1) + 1
 			WHERE NUMPED = :numberOrder
 		`, { position, hours, minutes, numberOrder })
 

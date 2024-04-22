@@ -105,6 +105,37 @@ class SalesOrderController {
 		await SalesOrdersRepository.changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position })
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
+
+	async modifyPositionOfBalcaoReserva(req, res) {
+
+		let numberOrder = req.params.numberorder
+		let { hours, minutes, seconds, date, position } = req.query
+
+		if (!hours || !minutes || !seconds || !date || !position) {
+			return res.status(400).json({ message: 'Informações incompletas'})
+		}
+
+		if(!["M", "L"].includes(position)) {
+			return res.status(404).json({ message: "Posição Inválida" })
+		}
+
+		hours = Number(hours)
+		minutes = Number(minutes)
+		seconds = Number(seconds)
+
+		if(typeof(hours) !== 'number' || typeof(minutes) !== 'number' || typeof(seconds) !== 'number' || date[4] !== '-') {
+			return res.json({ message: 'Dados inválidos'})
+		}
+
+		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
+
+		if (salesOrder.length === 0) {
+			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
+		}
+
+		await SalesOrdersRepository.changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position })
+		res.json({ message: 'Pedido liberado com sucesso'})
+	}
 }
 
 module.exports = new SalesOrderController()
