@@ -133,7 +133,7 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		await SalesOrdersRepository.changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position })
+		await SalesOrdersRepository.changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position })
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
 }

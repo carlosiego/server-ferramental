@@ -102,6 +102,14 @@ class SalesOrdersRepository {
 		`, { position, hours, minutes, numberOrder })
 
 		await executeQuery(`
+			UPDATE PCBLOQUEIOSPEDIDO
+			SET DTLIBERA = to_date(':date ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+			STATUS = 'L',
+			CODFUNCLIBERA = 48
+			WHERE NUMPED = :numberOrder;
+		`, { date, numberOrder})
+
+		await executeQuery(`
 			UPDATE PCPEDI
 			SET POSICAO = :position
 			WHERE NUMPED = :numberOrder
