@@ -1,3 +1,5 @@
+Este é um servidor que faz comunicação com o banco de dados oracle da TOTVS winthor.
+
 envs
 
 - PORT
