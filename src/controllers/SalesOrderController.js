@@ -133,8 +133,13 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		await SalesOrdersRepository.changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position })
-		res.json({ message: 'Pedido liberado com sucesso'})
+		let [SalesOrderOk, message] = await SalesOrdersRepository.changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position })
+
+		if(SalesOrderOk) {
+			return res.status(201).json({ message })
+		}
+
+		return res.status(400).json({ message })
 	}
 }
 

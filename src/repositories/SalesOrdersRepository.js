@@ -89,7 +89,9 @@ class SalesOrdersRepository {
 
 	async changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position }){
 
-		await executeQuery(`
+    try {
+			// Atualizar PCPEDC
+			await executeQuery(`
 			UPDATE PCPEDC
 			SET POSICAO = :position,
 			DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
@@ -97,24 +99,39 @@ class SalesOrdersRepository {
 			HORALIBERA = :hours,
 			MINUTOLIBERA = :minutes,
 			IMPORTADO = 'N',
-			NUMCAR = (SELECT * FROM (SELECT NUMCAR FROM PCPEDC ORDER BY NUMCAR DESC) WHERE ROWNUM = 1) + 1
+			NUMCAR = (SELECT PROXNUMCAR FROM PCCONSUM)
 			WHERE NUMPED = :numberOrder
-		`, { position, hours, minutes, numberOrder })
+			`, { position, hours, minutes, seconds, date, numberOrder });
 
-		await executeQuery(`
-			UPDATE PCBLOQUEIOSPEDIDO
-			SET DTLIBERA = to_date(':date ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
-			STATUS = 'L',
-			CODFUNCLIBERA = 48
-			WHERE NUMPED = :numberOrder;
-		`, { date, numberOrder})
+			// Atualizar PCCONSUM
+			await executeQuery(`
+					UPDATE PCCONSUM
+					SET PROXNUMCAR = PROXNUMCAR + 1
+			`);
 
-		await executeQuery(`
-			UPDATE PCPEDI
-			SET POSICAO = :position
-			WHERE NUMPED = :numberOrder
-		`, { numberOrder, position })
+			// Atualizar PCBLOQUEIOSPEDIDO
+			await executeQuery(`
+					UPDATE PCBLOQUEIOSPEDIDO
+					SET DTLIBERA = to_date(':date ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+					STATUS = 'L',
+					CODFUNCLIBERA = 48
+					WHERE NUMPED = :numberOrder;
+			`, { date, numberOrder})
 
+			// Atualizar PCPEDI
+			await executeQuery(`
+					UPDATE PCPEDI
+					SET POSICAO = :position
+					WHERE NUMPED = :numberOrder
+			`, { position, numberOrder });
+
+			return [true, 'Pedido Liberado com Sucesso!']; // Operação bem-sucedida
+		} catch(err) {
+				// Rollback transação em caso de erro
+				await executeQuery("ROLLBACK");
+				console.log('Error: ' + err);
+				return [false, err]; // Operação falhou
+		}
 	}
 
 	async findByRca({ rca, initialDate, finalDate, position }) {
