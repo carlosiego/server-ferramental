@@ -115,7 +115,7 @@ class SalesOrderController {
 			return res.status(400).json({ message: 'Informações incompletas'})
 		}
 
-		if(!["M", "L"].includes(position)) {
+		if(!["M", "L", "P"].includes(position)) {
 			return res.status(404).json({ message: "Posição Inválida" })
 		}
 
@@ -128,18 +128,18 @@ class SalesOrderController {
 		}
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
-
 		if (salesOrder.length === 0) {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
 		let [SalesOrderOk, message] = await SalesOrdersRepository.changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position })
+		return res.json('ok')
 
-		if(SalesOrderOk) {
-			return res.status(201).json({ message })
-		}
+		// if(SalesOrderOk) {
+		// 	return res.status(201).json({ message })
+		// }
 
-		return res.status(400).json({ message })
+		// return res.status(400).json({ message })
 	}
 }
 

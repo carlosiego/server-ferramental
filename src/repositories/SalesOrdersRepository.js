@@ -89,9 +89,9 @@ class SalesOrdersRepository {
 
 	async changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date, position }){
 
-    try {
-			// Atualizar PCPEDC
-			await executeQuery(`
+		await executeQuery(`
+		BEGIN
+
 			UPDATE PCPEDC
 			SET POSICAO = :position,
 			DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
@@ -100,38 +100,19 @@ class SalesOrdersRepository {
 			MINUTOLIBERA = :minutes,
 			IMPORTADO = 'N',
 			NUMCAR = (SELECT PROXNUMCAR FROM PCCONSUM)
-			WHERE NUMPED = :numberOrder
-			`, { position, hours, minutes, seconds, date, numberOrder });
+			WHERE NUMPED = :numberOrder;
 
-			// Atualizar PCCONSUM
-			await executeQuery(`
-					UPDATE PCCONSUM
-					SET PROXNUMCAR = PROXNUMCAR + 1
-			`);
+			UPDATE PCPEDI
+			SET POSICAO = :position
+			WHERE NUMPED = :numberOrder;
 
-			// Atualizar PCBLOQUEIOSPEDIDO
-			await executeQuery(`
-					UPDATE PCBLOQUEIOSPEDIDO
-					SET DTLIBERA = to_date(':date ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
-					STATUS = 'L',
-					CODFUNCLIBERA = 48
-					WHERE NUMPED = :numberOrder;
-			`, { date, numberOrder})
+			COMMIT;
+		END;
+		`, { position, hours, minutes, numberOrder })
 
-			// Atualizar PCPEDI
-			await executeQuery(`
-					UPDATE PCPEDI
-					SET POSICAO = :position
-					WHERE NUMPED = :numberOrder
-			`, { position, numberOrder });
 
-			return [true, 'Pedido Liberado com Sucesso!']; // Operação bem-sucedida
-		} catch(err) {
-				// Rollback transação em caso de erro
-				await executeQuery("ROLLBACK");
-				console.log('Error: ' + err);
-				return [false, err]; // Operação falhou
-		}
+		return [true ,'ok']
+
 	}
 
 	async findByRca({ rca, initialDate, finalDate, position }) {

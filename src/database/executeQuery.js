@@ -9,7 +9,7 @@ async function executeQuery(query, binds) {
 	try {
 		let result;
 		if(binds){
-			result = await connection.execute(query, binds, options);
+			result = await connection.execute(query, binds);
 		}else{
 			result = await connection.execute(query);
 		}
