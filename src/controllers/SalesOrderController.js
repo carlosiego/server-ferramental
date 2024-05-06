@@ -70,39 +70,49 @@ class SalesOrderController {
 			sales.push(prop)
 		})
 
-		console.log({ metaData, rows})
-
 		return res.json(sales);
 	}
 
-	async modifyPositionOfTelemarketing(req, res) {
+	async modifyPositionOfTelemarketingBtoL(req, res) {
 
 		let numberOrder = req.params.numberorder
-		let { hours, minutes, seconds, date, position } = req.query
+		let { hours, minutes, seconds, date } = req.query
+		let regexDate = /^\d{4}-\d{2}-\d{2}$/
 
-		if (!hours || !minutes || !seconds || !date || !position) {
-			return res.status(400).json({ message: 'Informações incompletas'})
-		}
-
-		if(!["M", "L"].includes(position)) {
-			return res.status(404).json({ message: "Posição Inválida" })
+		if (!hours || !minutes || !seconds || !regexDate.test(date)) {
+			return res.status(400).json({ message: 'Informações incompletas!'})
 		}
 
 		hours = Number(hours)
 		minutes = Number(minutes)
 		seconds = Number(seconds)
 
-		if(typeof(hours) !== 'number' || typeof(minutes) !== 'number' || typeof(seconds) !== 'number' || date[4] !== '-') {
-			return res.json({ message: 'Dados inválidos'})
+		if(typeof(hours) !== 'number' || typeof(minutes) !== 'number' || typeof(seconds) !== 'number') {
+			return res.json({ message: 'Dados inválidos!'})
 		}
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
 		if (salesOrder.length === 0) {
-			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
+			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
 		}
 
-		await SalesOrdersRepository.changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position })
+		let indexOfOrigemPed = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'ORIGEMPED')
+		let origemPed = salesOrder.headerOrder.rows[0][indexOfOrigemPed]
+
+		if(origemPed !== 'T') return res.status(400).json({ message: 'Erro, pedido tem que ser de origem Telemarketing!' })
+
+		let indexOfPosicao = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'POSICAO')
+		let posicao = salesOrder.headerOrder.rows[0][indexOfPosicao]
+
+		if(posicao !== 'B') return res.status(400).json({ message: 'Erro, pedido não está bloqueado!' })
+
+		let result = await SalesOrdersRepository.changePositionOfTelemarketingBtoL({ numberOrder, hours, minutes, seconds, date })
+
+		if(result.errorNum) {
+			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
+		}
+
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
 
@@ -121,20 +131,19 @@ class SalesOrderController {
 		minutes = Number(minutes)
 		seconds = Number(seconds)
 
-		if(typeof(hours) !== 'number' || typeof(minutes) !== 'number' || typeof(seconds) !== 'number' || date[4] !== '-') {
-			return res.json({ message: 'Dados inválidos'})
+		if(typeof(hours) !== 'number' || typeof(minutes) !== 'number' || typeof(seconds) !== 'number') {
+			return res.json({ message: 'Dados inválidos!'})
 		}
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 		if (salesOrder.length === 0) {
-			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
+			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
 		}
 
 		let indexOfOrigemPed = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'ORIGEMPED')
 		let origemPed = salesOrder.headerOrder.rows[0][indexOfOrigemPed]
 
 		if(origemPed !== 'R') return res.status(400).json({ message: 'Erro, pedido tem que ser de origem Balcão reserva!' })
-
 
 		let indexOfPosicao = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'POSICAO')
 		let posicao = salesOrder.headerOrder.rows[0][indexOfPosicao]

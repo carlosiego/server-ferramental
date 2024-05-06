@@ -67,24 +67,27 @@ class SalesOrdersRepository {
 		return { headerOrder, prodsOrder };
 	}
 
-	async changePositionOfTelemarketing({ numberOrder, hours, minutes, seconds, date, position }){
+	async changePositionOfTelemarketingBtoL({ numberOrder, hours, minutes, seconds, date }){
 
-		await executeQuery(`
-			UPDATE PCPEDC
-			SET POSICAO = :position,
-			DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
-			CODFUNCLIBERA = 48,
-			HORALIBERA = :hours,
-			MINUTOLIBERA = :minutes
-			WHERE NUMPED = :numberOrder
-		`, { position, hours, minutes, numberOrder })
+		let result = await executeQuery(`
+			BEGIN
+				UPDATE PCPEDC
+				SET POSICAO = 'L',
+				DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
+				CODFUNCLIBERA = 48,
+				HORALIBERA = :hours,
+				MINUTOLIBERA = :minutes
+				WHERE NUMPED = :numberOrder;
 
-		await executeQuery(`
-			UPDATE PCPEDI
-			SET POSICAO = :position
-			WHERE NUMPED = :numberOrder
-		`, { numberOrder, position })
+				UPDATE PCPEDI
+				SET POSICAO = 'L'
+				WHERE NUMPED = :numberOrder;
 
+				COMMIT;
+			END;
+		`, { hours, minutes, numberOrder })
+
+		return result;
 	}
 
 	async changePositionOfBalcaoReservaBtoM({ numberOrder, hours, minutes, seconds, date }){

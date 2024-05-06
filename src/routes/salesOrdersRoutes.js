@@ -6,7 +6,7 @@ const router = express.Router()
 router
 	.get(`/salesorders/numberorder/:numberorder`, SalesOrderController.showByNum)
 	.get(`/salesorders/rca/:rca`, SalesOrderController.showByRca)
-	.put(`/salesorders/numberorder/telemarketing/:numberorder`, SalesOrderController.modifyPositionOfTelemarketing)
+	.put(`/salesorders/numberorder/telemarketing/:numberorder`, SalesOrderController.modifyPositionOfTelemarketingBtoL)
 	.put(`/salesorders/numberorder/balcaoreserva/:numberorder`, SalesOrderController.modifyPositionOfBalcaoReservaBtoM)
 
 module.exports = router
