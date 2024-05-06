@@ -130,13 +130,24 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
+		let indexOfOrigemPed = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'ORIGEMPED')
+		let origemPed = salesOrder.headerOrder.rows[0][indexOfOrigemPed]
+
+		if(origemPed !== 'R') return res.status(400).json({ message: 'Erro, pedido tem que ser de origem Balcão reserva!' })
+
+
+		let indexOfPosicao = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'POSICAO')
+		let posicao = salesOrder.headerOrder.rows[0][indexOfPosicao]
+
+		if(posicao !== 'B') return res.status(400).json({ message: 'Erro, pedido não está bloqueado!' })
+
 		let result = await SalesOrdersRepository.changePositionOfBalcaoReservaBtoM({ numberOrder, hours, minutes, seconds, date })
 
 		if(result.errorNum) {
 			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
 
-		res.status(201).json('ok')
+		res.status(201).json({ message: 'Pedido desbloqueado com sucesso!'})
 	}
 }
 
