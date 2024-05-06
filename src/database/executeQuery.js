@@ -2,9 +2,6 @@ const getConnection = require('./dbConnection');
 
 async function executeQuery(query, binds) {
 	const connection = await getConnection();
-	const options = {
-		autoCommit: true
-	}
 
 	try {
 		let result;
@@ -16,6 +13,7 @@ async function executeQuery(query, binds) {
 		return result;
 	} catch (error) {
 		console.error('Error executing query:', error);
+		return error;
 	} finally {
 		if (connection) {
 			try {

@@ -106,12 +106,14 @@ class SalesOrderController {
 		res.json({ message: 'Pedido liberado com sucesso'})
 	}
 
-	async modifyPositionOfBalcaoReserva(req, res) {
+	async modifyPositionOfBalcaoReservaBtoM(req, res) {
 
 		let numberOrder = req.params.numberorder
 		let { hours, minutes, seconds, date } = req.query
 
-		if (!hours || !minutes || !seconds || !date ) {
+		let regexDate = /^\d{4}-\d{2}-\d{2}$/
+
+		if (!hours || !minutes || !seconds || !regexDate.test(date) ) {
 			return res.status(400).json({ message: 'Informações incompletas'})
 		}
 
@@ -128,13 +130,13 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		let [SalesOrderOk, message] = await SalesOrdersRepository.changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date })
+		let result = await SalesOrdersRepository.changePositionOfBalcaoReservaBtoM({ numberOrder, hours, minutes, seconds, date })
 
-		if(SalesOrderOk) {
-			return res.status(201).json({ message })
+		if(result.errorNum) {
+			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
 
-		return res.status(400).json({ message })
+		res.status(201).json('ok')
 	}
 }
 

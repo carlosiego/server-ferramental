@@ -87,9 +87,9 @@ class SalesOrdersRepository {
 
 	}
 
-	async changePositionOfBalcaoReserva({ numberOrder, hours, minutes, seconds, date }){
+	async changePositionOfBalcaoReservaBtoM({ numberOrder, hours, minutes, seconds, date }){
 
-		await executeQuery(`
+		let result = await executeQuery(`
 		BEGIN
 
 			UPDATE PCPEDC
@@ -122,8 +122,7 @@ class SalesOrdersRepository {
 		END;
 		`, { hours, minutes, numberOrder })
 
-
-		return [true ,'ok']
+		return result;
 
 	}
 
