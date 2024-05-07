@@ -131,7 +131,45 @@ class SalesOrdersRepository {
 
 	async findByRca({ rca, initialDate, finalDate, position }) {
 
-		let salesOrder = await executeQuery(`
+		let salesOrder;
+		console.log(rca)
+		if(rca !== 9999) {
+			console.log('aquiii')
+			salesOrder = await executeQuery(`
+				SELECT
+				PCPEDC.NUMPED,
+				PCPEDC.ORIGEMPED,
+				PCPEDC.DATA,
+				PCPEDC.VLTOTAL,
+				PCPEDC.VLTABELA,
+				PCPEDC.CODCLI,
+				PCCLIENT.CLIENTE,
+				PCPEDC.POSICAO,
+				PCPEDC.OBS,
+				PCPEDC.OBS1,
+				PCPEDC.OBS2,
+				PCPEDC.OBSENTREGA1,
+				PCPEDC.OBSENTREGA2,
+				PCPEDC.OBSENTREGA3,
+				PCPEDC.NUMITENS,
+				PCPEDC.CODUSUR,
+				PCPEDC.CODCOB,
+				PCPEDC.PRAZO1,
+				PCPEDC.PRAZO2,
+				PCPEDC.PRAZO3,
+				PCPEDC.PRAZO4,
+				PCPEDC.PRAZO5
+				FROM PCPEDC
+				JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDC.CODCLI
+				WHERE DATA BETWEEN (TO_DATE (:initialDate, 'YYYY-MM-DD')) AND (TO_DATE (:finalDate, 'YYYY-MM-DD'))
+				AND CODUSUR = :rca
+				AND POSICAO = :position
+			`, { rca, initialDate, finalDate, position })
+
+			return salesOrder
+		}
+
+		salesOrder = await executeQuery(`
 			SELECT
 			PCPEDC.NUMPED,
 			PCPEDC.ORIGEMPED,
@@ -158,9 +196,8 @@ class SalesOrdersRepository {
 			FROM PCPEDC
 			JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDC.CODCLI
 			WHERE DATA BETWEEN (TO_DATE (:initialDate, 'YYYY-MM-DD')) AND (TO_DATE (:finalDate, 'YYYY-MM-DD'))
-			AND CODUSUR = :rca
 			AND POSICAO = :position
-		`, { rca, initialDate, finalDate, position })
+		`, { initialDate, finalDate, position })
 
 		return salesOrder
 
