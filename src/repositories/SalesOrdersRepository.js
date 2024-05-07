@@ -132,7 +132,7 @@ class SalesOrdersRepository {
 	async findByRca({ rca, initialDate, finalDate, position }) {
 
 		let salesOrder;
-		console.log(rca)
+
 		if(rca !== 9999) {
 			console.log('aquiii')
 			salesOrder = await executeQuery(`
