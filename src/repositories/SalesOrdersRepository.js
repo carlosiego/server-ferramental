@@ -134,7 +134,7 @@ class SalesOrdersRepository {
 		let salesOrder;
 
 		if(rca !== 9999) {
-			console.log('aquiii')
+
 			salesOrder = await executeQuery(`
 				SELECT
 				PCPEDC.NUMPED,
