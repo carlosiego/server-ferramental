@@ -75,6 +75,19 @@ class SalesOrdersRepository {
 
 		let result = await executeQuery(`
 			BEGIN
+
+				UPDATE PCEST
+				SET QTRESERV = QTRESERV +
+				(SELECT PCPEDI.QT
+				FROM PCPEDI
+				WHERE PCEST.CODPROD = PCPEDI.CODPROD
+				AND PCPEDI.NUMPED = :numberOrder)
+				WHERE EXISTS (
+				SELECT 1
+				FROM PCPEDI
+				WHERE PCEST.CODPROD = PCPEDI.CODPROD
+				AND PCPEDI.NUMPED = :numberOrder);
+
 				UPDATE PCPEDC
 				SET POSICAO = 'L',
 				DTLIBERA = to_date('${date} ${hours}:${minutes}:${seconds}', 'YYYY-MM-DD HH24:MI:SS'),
@@ -98,6 +111,18 @@ class SalesOrdersRepository {
 
 		let result = await executeQuery(`
 		BEGIN
+
+			UPDATE PCEST
+			SET QTRESERV = QTRESERV +
+			(SELECT PCPEDI.QT
+			FROM PCPEDI
+			WHERE PCEST.CODPROD = PCPEDI.CODPROD
+			AND PCPEDI.NUMPED = :numberOrder)
+			WHERE EXISTS (
+			SELECT 1
+			FROM PCPEDI
+			WHERE PCEST.CODPROD = PCPEDI.CODPROD
+			AND PCPEDI.NUMPED = :numberOrder);
 
 			UPDATE PCPEDC
 			SET POSICAO = 'M',
