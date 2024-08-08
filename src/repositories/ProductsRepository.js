@@ -24,6 +24,10 @@ class ProductsRepository {
         ROUND(PCDESCONTO.PERCDESC, 2) AS DESCONTO,
         PCDESCONTO.DTINICIO AS DTINICIODESCONTO,
         PCDESCONTO.DTFIM AS DTFIMDESCONTO,
+		CASE
+			WHEN PCDESCONTO.DTFIM >= CURRENT_DATE THEN 1
+			ELSE 0
+		END AS TEMPROMOCAO,
         PCPRODUT.INFORMACOESTECNICAS,
 		PCPRODUT.CODFORNEC,
 		PCFORNEC.FORNECEDOR,
@@ -47,7 +51,7 @@ class ProductsRepository {
 
 		let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
 
-		let produtcs = await executeQuery(`
+		let products = await executeQuery(`
 			SELECT
 				PCPRODUT.CODPROD,
 				PCPRODUT.DESCRICAO,
@@ -80,7 +84,7 @@ class ProductsRepository {
 				ORDER BY PCPRODUT.DESCRICAO ${direction}
 			`, { description })
 
-		return produtcs;
+		return products;
 	}
 
 	async findMinimumByDescription(description, orderBy = 'ASC') {
@@ -92,7 +96,7 @@ class ProductsRepository {
 		let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
 		console.log(description)
 
-		let produtcs = await executeQuery(`
+		let products = await executeQuery(`
 			SELECT
 				PCPRODUT.CODPROD,
 				PCPRODUT.DESCRICAO,
@@ -107,7 +111,7 @@ class ProductsRepository {
 				ORDER BY PCPRODUT.DESCRICAO ${direction}
 			`, { description })
 
-		return produtcs;
+		return products;
 	}
 
 	async findByCodeBar(codeBar) {
