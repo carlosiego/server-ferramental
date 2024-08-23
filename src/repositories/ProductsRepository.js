@@ -94,12 +94,12 @@ class ProductsRepository {
 		description = description.endsWith('%') ? description : description + '%'
 
 		let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
-		console.log(description)
 
 		let products = await executeQuery(`
 			SELECT
 				PCPRODUT.CODPROD,
 				PCPRODUT.DESCRICAO,
+				PCPRODUT.CODAUXILIAR,
 				PCTABPR.PTABELA,
 				(PCEST.QTESTGER - PCEST.QTBLOQUEADA - PCEST.QTRESERV ) AS QTDISPONIVEL,
 				PCPRODUT.EMBALAGEM,
@@ -159,6 +159,7 @@ class ProductsRepository {
 				PCPRODUT.CODPROD,
         PCPRODUT.DESCRICAO,
         PCTABPR.PTABELA,
+				PCPRODUT.CODAUXILIAR,
         (PCEST.QTESTGER - PCEST.QTBLOQUEADA - PCEST.QTRESERV ) AS QTDISPONIVEL,
         PCPRODUT.EMBALAGEM,
 				NVL(REGEXP_SUBSTR(PCPRODUT.DIRFOTOPROD, '[^\\]+$'), 'not-found.png') AS DIRFOTOPROD
@@ -214,6 +215,7 @@ class ProductsRepository {
 		SELECT
 			PCPRODUT.CODPROD,
 			PCPRODUT.DESCRICAO,
+			PCPRODUT.CODAUXILIAR,
 			PCTABPR.PTABELA,
 			(PCEST.QTESTGER - PCEST.QTBLOQUEADA - PCEST.QTRESERV ) AS QTDISPONIVEL,
 			PCPRODUT.EMBALAGEM,
