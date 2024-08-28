@@ -9,6 +9,7 @@ const salesOrdersRouter = require('./routes/salesOrdersRoutes')
 const budgetsRouter = require('./routes/budgetsRoutes')
 const supplierRouter = require('./routes/supplierRoutes')
 const usersRoutes = require('./routes/usersRoutes')
+const clientsRoutes = require('./routes/clientsRoutes')
 const app = express()
 
 app.use(express.json())
@@ -21,7 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use(compression())
-app.use(productsRouter, salesOrdersRouter, budgetsRouter, supplierRouter, usersRoutes)
+app.use(productsRouter, salesOrdersRouter, budgetsRouter, supplierRouter, usersRoutes, clientsRoutes)
 
 app.use((error, req, res, next) => {
 
