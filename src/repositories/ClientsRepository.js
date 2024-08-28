@@ -11,7 +11,30 @@ class ProductsRepository {
 		let direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'
 
 		let clients = await executeQuery(`
-			SELECT * FROM PCCLIENT
+			SELECT
+				CODCLI,
+				CLIENTE,
+				FANTASIA,
+				ENDERENT,
+				BAIRROENT,
+				TELENT,
+				MUNICENT,
+				ESTENT,
+				CEPENT,
+				CGCENT,
+				IEENT,
+				DTULTCOMP,
+				BLOQUEIO
+				OBS,
+				OBS2,
+				OBS3,
+				OBS4,
+				OBS5,
+				CODCOB,
+				DTBLOQ,
+				EMAIL,
+				NVL(REGEXP_SUBSTR(DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE
+			FROM PCCLIENT
 			WHERE CLIENTE LIKE :nameorfantasy OR FANTASIA LIKE :nameorfantasy
 			ORDER BY CLIENTE ${direction}
 		`, { nameorfantasy })
