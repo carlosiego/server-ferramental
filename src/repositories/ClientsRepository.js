@@ -2,6 +2,40 @@ const executeQuery = require('../database/executeQuery');
 
 class ProductsRepository {
 
+	async findByCodcli(codcli) {
+
+		let client = executeQuery(`
+			SELECT
+			CODCLI,
+			CLIENTE,
+			FANTASIA,
+			ENDERENT,
+			BAIRROENT,
+			TELENT,
+			MUNICENT,
+			ESTENT,
+			CEPENT,
+			CGCENT,
+			IEENT,
+			DTULTCOMP,
+			BLOQUEIO
+			OBS,
+			OBS2,
+			OBS3,
+			OBS4,
+			OBS5,
+			CODCOB,
+			DTBLOQ,
+			EMAIL,
+			NVL(REGEXP_SUBSTR(DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE
+			FROM PCCLIENT
+			WHERE CODCLI = :codcli`, { codcli }
+		)
+
+		return client;
+
+	}
+
 	async findByNameOrFantasy(nameorfantasy, orderBy = 'ASC') {
 
 		nameorfantasy = nameorfantasy.toUpperCase()
@@ -42,7 +76,6 @@ class ProductsRepository {
 		return clients;
 
 	}
-
 }
 
 module.exports = new ProductsRepository();

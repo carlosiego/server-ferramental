@@ -3,6 +3,33 @@ const client = require('../redis')
 
 class ClientController {
 
+	async showByCodcli(req, res) {
+
+		let { codcli } = req.params
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let clientFromCache = await client.get(fullUrl)
+
+		if(clientFromCache) {
+			return res.json(JSON.parse(clientFromCache))
+		}
+
+		let { metaData, rows } = await ClientsRepository.findByCodcli(codcli)
+		let [row] = rows
+
+		if (!row) {
+			await client.set(fullUrl, JSON.stringify({ error: 'Cliente não encontrado' }), { EX: process.env.EXPIRATION })
+			return res.status(404).json({ error: 'Cliente não encontrado' })
+		}
+
+		let cli = {}
+		row.forEach((item, index) => {
+			cli[metaData[index].name] = item
+		})
+
+		await client.set(fullUrl, JSON.stringify(cli), { EX: process.env.EXPIRATION})
+		res.json(cli)
+	}
+
 	async showByNameOrFantasy(req, res) {
 
 		let { nameorfantasy } = req.params
