@@ -36,6 +36,40 @@ class ProductsRepository {
 
 	}
 
+	async findByCnpj(cnpj) {
+
+		let client = executeQuery(`
+			SELECT
+			CODCLI,
+			CLIENTE,
+			FANTASIA,
+			ENDERENT,
+			BAIRROENT,
+			TELENT,
+			MUNICENT,
+			ESTENT,
+			CEPENT,
+			CGCENT,
+			IEENT,
+			DTULTCOMP,
+			BLOQUEIO
+			OBS,
+			OBS2,
+			OBS3,
+			OBS4,
+			OBS5,
+			CODCOB,
+			DTBLOQ,
+			EMAIL,
+			NVL(REGEXP_SUBSTR(DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE
+			FROM PCCLIENT
+			WHERE CGCENT = :cnpj`, { cnpj }
+		)
+
+		return client;
+
+	}
+
 	async findByNameOrFantasy(nameorfantasy, orderBy = 'ASC') {
 
 		nameorfantasy = nameorfantasy.toUpperCase()
