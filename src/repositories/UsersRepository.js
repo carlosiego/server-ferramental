@@ -5,7 +5,7 @@ class UsersRepository {
 	async findUsersWithRca() {
 
 		let users = await executeQuery(`
-			SELECT CODUSUR, NOME, NVL(USURDIRFV, 'not-found.png') FROM PCUSUARI WHERE BLOQUEIO = 'N' ORDER BY CODUSUR
+			SELECT CODUSUR, NOME, NVL(USURDIRFV, 'not-found.png') AS USURDIRFV FROM PCUSUARI WHERE BLOQUEIO = 'N' ORDER BY CODUSUR
 		`)
 
 		return users
