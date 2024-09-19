@@ -183,6 +183,10 @@ class SalesOrdersRepository {
 			SET POSICAO = 'B'
 			WHERE NUMPED = :numberOrder;
 
+			UPDATE PCPEDI
+			SET PERDESC = TRUNC((PTABELA - PVENDA) * 100 / PTABELA, 2)
+			WHERE NUMPED = :numberOrder;
+
 			COMMIT;
 		END;
 		`, { numberOrder })
