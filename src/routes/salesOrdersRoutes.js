@@ -8,5 +8,6 @@ router
 	.get(`/salesorders/rca/:rca`, SalesOrderController.showByRca)
 	.put(`/salesorders/telemarketing/numberorder/:numberorder`, SalesOrderController.modifyPositionOfTelemarketingBtoL)
 	.put(`/salesorders/balcaoreserva/numberorder/:numberorder`, SalesOrderController.modifyPositionOfBalcaoReservaBtoM)
+	.put(`/salesorders/block/:numberorder`, SalesOrderController.blockSalesOrder)
 
 module.exports = router

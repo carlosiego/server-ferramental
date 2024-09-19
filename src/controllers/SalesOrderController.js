@@ -158,6 +158,26 @@ class SalesOrderController {
 
 		res.status(201).json({ message: 'Pedido desbloqueado com sucesso!'})
 	}
+
+	async blockSalesOrder(req, res) {
+
+		let numberOrder = req.params.numberorder
+
+		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
+
+		if (salesOrder.length === 0) {
+			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
+		}
+
+		let result = await SalesOrdersRepository.blockPosition({ numberOrder })
+
+		if(result.errorNum) {
+			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
+		}
+		console.log(result)
+		res.status(201).json({ message: 'Pedido bloqueado com sucesso!'})
+	}
+
 }
 
 module.exports = new SalesOrderController()

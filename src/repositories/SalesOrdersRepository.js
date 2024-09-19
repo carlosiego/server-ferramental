@@ -158,6 +158,39 @@ class SalesOrdersRepository {
 
 	}
 
+	async blockPosition({ numberOrder }){
+
+		let result = await executeQuery(`
+		BEGIN
+
+			UPDATE PCEST
+			SET QTRESERV = QTRESERV -
+			(SELECT PCPEDI.QT
+			FROM PCPEDI
+			WHERE PCEST.CODPROD = PCPEDI.CODPROD
+			AND PCPEDI.NUMPED = :numberOrder)
+			WHERE EXISTS (
+			SELECT 1
+			FROM PCPEDI
+			WHERE PCEST.CODPROD = PCPEDI.CODPROD
+			AND PCPEDI.NUMPED = :numberOrder);
+
+			UPDATE PCPEDC
+			SET POSICAO = 'B'
+			WHERE NUMPED = :numberOrder;
+
+			UPDATE PCPEDI
+			SET POSICAO = 'B'
+			WHERE NUMPED = :numberOrder;
+
+			COMMIT;
+		END;
+		`, { numberOrder })
+
+		return result;
+
+	}
+
 	async findByRca({ rca, initialDate, finalDate, position }) {
 
 		let salesOrder;
