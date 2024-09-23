@@ -195,6 +195,31 @@ class SalesOrdersRepository {
 
 	}
 
+	async modifyAndFix({ numberOrder, position }){
+
+		let result = await executeQuery(`
+		BEGIN
+
+			UPDATE PCPEDC
+			SET POSICAO = :position
+			WHERE NUMPED = :numberOrder;
+
+			UPDATE PCPEDI
+			SET POSICAO = :position
+			WHERE NUMPED = :numberOrder;
+
+			UPDATE PCPEDI
+			SET PERDESC = TRUNC((PTABELA - PVENDA) * 100 / PTABELA, 2)
+			WHERE NUMPED = :numberOrder;
+
+			COMMIT;
+		END;
+		`, { position, numberOrder })
+
+		return result;
+
+	}
+
 	async findByRca({ rca, initialDate, finalDate, position }) {
 
 		let salesOrder;

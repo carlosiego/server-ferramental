@@ -9,5 +9,6 @@ router
 	.put(`/salesorders/telemarketing/numberorder/:numberorder`, SalesOrderController.modifyPositionOfTelemarketingBtoL)
 	.put(`/salesorders/balcaoreserva/numberorder/:numberorder`, SalesOrderController.modifyPositionOfBalcaoReservaBtoM)
 	.put(`/salesorders/block/:numberorder`, SalesOrderController.blockSalesOrder)
+	.put(`/salesorders/fix/:numberorder`, SalesOrderController.fixSalesOrder)
 
 module.exports = router
