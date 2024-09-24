@@ -4,7 +4,7 @@ class ProductsRepository {
 
 	async findByCodcli(codcli) {
 
-		let client = executeQuery(`
+		let client = await executeQuery(`
 			SELECT
 			CODCLI,
 			CLIENTE,
@@ -27,11 +27,12 @@ class ProductsRepository {
 			OBS5,
 			CODCOB,
 			CASE WHEN
-			PCCLIENT.CODPLPAG = 9 THEN 1
-			ELSE CODPLPAG
+				PCCLIENT.CODPLPAG = 9 THEN 1
+				ELSE CODPLPAG
 			END AS CODPLPAG,
 			PERDESC,
-			PCCLIENT.BLOQUEIO,
+			BLOQUEIO,
+			FUNCOESVENDAS.BUSCARLIMCREDCLI(:codcli, 1, 'D') AS LIMITEDISPONIVEL,
 			DTBLOQ,
 			EMAIL,
 			NVL(REGEXP_SUBSTR(DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE
@@ -45,7 +46,7 @@ class ProductsRepository {
 
 	async findByCnpj(cnpj) {
 
-		let client = executeQuery(`
+		let client = await executeQuery(`
 			SELECT
 			CODCLI,
 			CLIENTE,
@@ -73,6 +74,7 @@ class ProductsRepository {
 			END AS CODPLPAG,
 			PERDESC,
 			PCCLIENT.BLOQUEIO,
+			FUNCOESVENDAS.BUSCARLIMCREDCLI(CODCLI, 1, 'D') AS LIMITEDISPONIVEL,
 			DTBLOQ,
 			EMAIL,
 			NVL(REGEXP_SUBSTR(DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE
@@ -120,6 +122,7 @@ class ProductsRepository {
 				END AS CODPLPAG,
 				PERDESC,
 				PCCLIENT.BLOQUEIO,
+				FUNCOESVENDAS.BUSCARLIMCREDCLI(CODCLI, 1, 'D') AS LIMITEDISPONIVEL,
 				DTBLOQ,
 				EMAIL,
 				NVL(REGEXP_SUBSTR(DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE
@@ -131,6 +134,7 @@ class ProductsRepository {
 		return clients;
 
 	}
+
 }
 
 module.exports = new ProductsRepository();
