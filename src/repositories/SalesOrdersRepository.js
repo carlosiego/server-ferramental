@@ -8,7 +8,6 @@ class SalesOrdersRepository {
       SELECT
         PCPEDC.NUMPED,
         PCPEDC.ORIGEMPED,
-				PCUSUARI.CODUSUR,
         PCUSUARI.NOME,
         NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
         PCPEDC.DATA,
@@ -235,6 +234,8 @@ class SalesOrdersRepository {
 				SELECT
 				PCPEDC.NUMPED,
 				PCPEDC.ORIGEMPED,
+        PCUSUARI.NOME,
+        NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
 				PCPEDC.DATA,
 				PCPEDC.VLTOTAL,
 				PCPEDC.VLTABELA,
@@ -259,8 +260,9 @@ class SalesOrdersRepository {
 				PCPEDC.PRAZO5
 				FROM PCPEDC
 				JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDC.CODCLI
+				JOIN PCUSUARI ON PCUSUARI.CODUSUR = PCPEDC.CODUSUR
 				WHERE DATA BETWEEN (TO_DATE (:initialDate, 'YYYY-MM-DD')) AND (TO_DATE (:finalDate, 'YYYY-MM-DD'))
-				AND CODUSUR = :rca
+				AND PCPEDC.CODUSUR = :rca
 				AND POSICAO = :position
 			`, { rca, initialDate, finalDate, position })
 
