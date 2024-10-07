@@ -8,6 +8,9 @@ class SalesOrdersRepository {
       SELECT
         PCPEDC.NUMPED,
         PCPEDC.ORIGEMPED,
+				PCUSUARI.CODUSUR,
+        PCUSUARI.NOME,
+        NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
         PCPEDC.DATA,
         PCPEDC.VLTOTAL,
 				PCPEDC.VLTABELA,
@@ -32,6 +35,7 @@ class SalesOrdersRepository {
         PCPEDC.PRAZO5
       FROM PCPEDC
       JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDC.CODCLI
+			JOIN PCUSUARI ON PCUSUARI.CODUSUR = PCPEDC.CODUSUR
       WHERE PCPEDC.NUMPED = :numberOrder
       `, { numberOrder })
 
