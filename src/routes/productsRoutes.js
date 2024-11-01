@@ -13,5 +13,6 @@ router
 	.get(`/products/minimum/codesection/:codesection`, ProductsController.showMinimumBySection)
 	.get(`/products/promotions`, ProductsController.showPromotions)
 	.get(`/products/estmin/supplier/code/:code`, ProductsController.showEstMinBySupplier)
+	.get(`/products/morecodaux/code/:code`, ProductsController.showMoreCodAuxiliar)
 
 module.exports = router;

@@ -256,6 +256,33 @@ class ProductsController {
 		return res.json(products)
 
 	}
+
+	async showMoreCodAuxiliar(req, res) {
+
+		let { code } = req.params
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+		let productFromCache = await client.get(fullUrl)
+
+		if (productFromCache) {
+			return res.json(JSON.parse(productFromCache))
+		}
+
+		let { metaData, rows } = await ProductsRepository.findMoreCodAuxiliar(code)
+
+		let [row] = rows
+
+		if (!row) {
+			return res.status(404).json({ error: 'Produto não encontrado' })
+		}
+
+		let product = {}
+		row.forEach((item, index) => {
+			product[metaData[index].name] = item
+		})
+
+		await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION })
+		res.json(product)
+	}
 }
 
 

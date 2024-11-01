@@ -366,6 +366,16 @@ class ProductsRepository {
 
 	}
 
+	async findMoreCodAuxiliar(code) {
+		let result = await executeQuery(`
+			SELECT LISTAGG(CODAUXILIAR, ', ') WITHIN GROUP (ORDER BY CODAUXILIAR) AS CODAUXILIAR_CONCATENADO
+			FROM PCEMBALAGEM
+			WHERE CODPROD = :code
+			`, { code })
+
+			return result;
+	}
+
 };
 
 module.exports = new ProductsRepository();
