@@ -32,6 +32,24 @@ class UserController {
 		await client.set(fullUrl, JSON.stringify(users), { EX: process.env.EXPIRATION })
 		return res.json(users)
 	}
+
+	userIsActive(req, res) {
+		let { username } = req.params
+
+		username = username.toUpperCase()
+		if(process.env.INVALID_USERS.includes(username)) {
+			return res.status(401).json({
+				message: 'Usuário não autorizado',
+				isvalid: false
+			})
+		}
+
+		return res.status(401).json({
+			message: 'Usuário autorizado',
+			isvalid: true
+		})
+
+	}
 }
 
 module.exports = new UserController()
