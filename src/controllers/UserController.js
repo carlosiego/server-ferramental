@@ -44,7 +44,7 @@ class UserController {
 			})
 		}
 
-		return res.status(401).json({
+		return res.json({
 			message: 'Usuário autorizado',
 			isvalid: true
 		})
