@@ -5,21 +5,6 @@ class PrintController {
  async print(req, res) {
 
 	const { labelData } = req.body;
-// 	const labelData = `
-// SIZE 2.76,1.18
-// GAP 0.12,0
-// DIRECTION 1
-// CLS
-// TEXT 10,10,"0",0,1,1,"ABRACADEIRA CHAPA 10\\" 264-276"
-// BARCODE 10,50,"128",50,1,0,2,2,"7899315715398"
-// TEXT 10,110,"0",0,1,1,"7899315715398"
-// TEXT 200,50,"0",0,2,2,"R$ 34,51"
-// TEXT 10,150,"0",0,1,1,"CODIGO: 6376"
-// TEXT 10,180,"0",0,1,1,"PC"
-// PRINT 1
-// `.trim();
-
-
 
 	if (!labelData) {
 		return res.status(400).json({ error: 'Parâmetro ausente: labelData é obrigatório.' });
