@@ -11,6 +11,8 @@ class PrintController {
 		warehouse: '192.168.1.113' // DEPOSITO
 	}
 
+	product.DESCRICAO = product?.DESCRICAO.replaceAll('"', "'");
+
 	const printerPort = 9100; // Porta padrão para impressoras de rede
 
 	try {
