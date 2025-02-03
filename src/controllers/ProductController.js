@@ -227,7 +227,7 @@ class ProductsController {
 
 	}
 
-	async showEstMinBySupplier(req, res) {
+	async showBySupplier(req, res) {
 
 		let { code } = req.params
 
@@ -237,7 +237,7 @@ class ProductsController {
 			return res.json(JSON.parse(productsFromCache))
 		}
 
-		let { metaData, rows } = await ProductsRepository.findEstMinBySupplier(code)
+		let { metaData, rows } = await ProductsRepository.findBySupplier(code)
 
 		if(!rows.length) {
 			await client.set(fullUrl, JSON.stringify({error: 'Fornecedor não encontrado'}), { EX: process.env.EXPIRATION})
