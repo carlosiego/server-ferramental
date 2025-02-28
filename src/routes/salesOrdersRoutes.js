@@ -11,5 +11,7 @@ router
 	.put(`/salesorders/balcaoreserva/numberorder/:numberorder`, SalesOrderController.modifyPositionOfBalcaoReservaBtoM)
 	.put(`/salesorders/block/:numberorder`, SalesOrderController.blockSalesOrder)
 	.put(`/salesorders/fix/:numberorder`, SalesOrderController.fixSalesOrder)
+	.get(`/salesorders/numnota/toconfer/:numnota`, SalesOrderController.showByNumNotaToConfer)
+	.get(`/salesorders/keynfce/toconfer/:keynfce`, SalesOrderController.showByKeyNfceToConfer)
 
 module.exports = router

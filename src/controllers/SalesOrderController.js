@@ -83,6 +83,84 @@ class SalesOrderController {
 
 	}
 
+	async showByKeyNfceToConfer(req, res) {
+
+		let keyNfce = req.params.keynfce
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+
+		let salesOrderFromCache = await client.get(fullUrl)
+		if (salesOrderFromCache) {
+			return res.json(JSON.parse(salesOrderFromCache))
+		}
+
+		let saleOrder = await SalesOrdersRepository.findByKeyNfceToConfer(keyNfce)
+
+		if (saleOrder.length === 0) {
+			await client.set(fullUrl, JSON.stringify({ error: 'Pedido de venda não encontrado' }), { EX: process.env.EXPIRATION})
+			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
+		}
+
+		let { headerOrder, prodsOrder } = saleOrder
+
+		let headers = {}
+		let products = []
+
+		headerOrder.metaData.forEach((item, index) => {
+			headers[item.name] = headerOrder.rows[0][index]
+		})
+
+		prodsOrder.rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[prodsOrder.metaData[index].name] = value
+			})
+			products.push(prod)
+		})
+
+		await client.set(fullUrl, JSON.stringify({ headers, products }), { EX: process.env.EXPIRATION})
+		res.json({ headers, products })
+
+	}
+
+	async showByNumNotaToConfer(req, res) {
+
+		let numnota = req.params.numnota
+		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
+
+		let salesOrderFromCache = await client.get(fullUrl)
+		if (salesOrderFromCache) {
+			return res.json(JSON.parse(salesOrderFromCache))
+		}
+
+		let saleOrder = await SalesOrdersRepository.findByNumNotaToConfer(numnota)
+
+		if (saleOrder.length === 0) {
+			await client.set(fullUrl, JSON.stringify({ error: 'Pedido de venda não encontrado' }), { EX: process.env.EXPIRATION})
+			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
+		}
+
+		let { headerOrder, prodsOrder } = saleOrder
+
+		let headers = {}
+		let products = []
+
+		headerOrder.metaData.forEach((item, index) => {
+			headers[item.name] = headerOrder.rows[0][index]
+		})
+
+		prodsOrder.rows.forEach((item) => {
+			let prod = {}
+			item.forEach((value, index) => {
+				prod[prodsOrder.metaData[index].name] = value
+			})
+			products.push(prod)
+		})
+
+		await client.set(fullUrl, JSON.stringify({ headers, products }), { EX: process.env.EXPIRATION})
+		res.json({ headers, products })
+
+	}
+
 	async showByRca(req, res) {
 
 		let { rca } = req.params

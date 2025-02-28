@@ -149,6 +149,152 @@ class SalesOrdersRepository {
 		return { headerOrder, prodsOrder };
 	}
 
+	async findByKeyNfceToConfer(KeyNfce) {
+
+		let headerOrder = await executeQuery(`
+      SELECT
+        PCPEDC.NUMPED,
+        PCPEDC.ORIGEMPED,
+        PCUSUARI.NOME,
+        NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
+        PCPEDC.DATA,
+				PCPEDC.VLATEND,
+        PCPEDC.VLTOTAL,
+				PCPEDC.VLTABELA,
+				ROUND(PCPEDC.PERDESC, 2) AS PERDESC,
+        PCPEDC.CODCLI,
+        PCCLIENT.CLIENTE,
+				NVL(REGEXP_SUBSTR(PCCLIENT.DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE,
+        PCPEDC.POSICAO,
+        PCPEDC.OBS,
+        PCPEDC.OBS1,
+        PCPEDC.OBS2,
+        PCPEDC.OBSENTREGA1,
+        PCPEDC.OBSENTREGA2,
+        PCPEDC.OBSENTREGA3,
+        PCPEDC.NUMITENS,
+        PCPEDC.CODUSUR,
+        PCPEDC.CODCOB,
+        PCPEDC.PRAZO1,
+        PCPEDC.PRAZO2,
+        PCPEDC.PRAZO3,
+        PCPEDC.PRAZO4,
+        PCPEDC.PRAZO5
+      FROM PCPEDC
+      JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDC.CODCLI
+			JOIN PCUSUARI ON PCUSUARI.CODUSUR = PCPEDC.CODUSUR
+      WHERE PCPEDC.CHAVENFCE = :KeyNfce
+      `, { KeyNfce })
+
+		if(headerOrder.rows.length === 0) {
+			return []
+		}
+
+		let prodsOrder = await executeQuery(`
+      SELECT
+			PCPEDI.CODPROD,
+			PCPRODUT.DESCRICAO,
+			PCPEDI.QT,
+			PCPEDI.PVENDA,
+			PCPEDI.PTABELA,
+			PCPEDI.PERDESC,
+			PCPEDI.VLSUBTOTITEM,
+			PCPEDI.UNIDADE,
+			NVL(REGEXP_SUBSTR(PCPRODUT.DIRFOTOPROD, '[^\\]+$'), 'not-found.png') AS DIRFOTOPROD,
+			LISTAGG(PCEMBALAGEM.CODAUXILIAR, ',') WITHIN GROUP (ORDER BY PCEMBALAGEM.CODAUXILIAR) AS CODAUXILIARES,
+			0 AS QTCONFER
+			FROM PCPEDI
+			JOIN PCEMBALAGEM ON PCPEDI.CODPROD = PCEMBALAGEM.CODPROD
+			JOIN PCPRODUT ON PCPEDI.CODPROD = PCPRODUT.CODPROD
+      WHERE PCPEDI.NUMPED = :numberOrder
+			GROUP BY
+			PCPEDI.CODPROD,
+			PCPRODUT.DESCRICAO,
+			PCPEDI.QT,
+			PCPEDI.PVENDA,
+			PCPEDI.PTABELA,
+			PCPEDI.PERDESC,
+			PCPEDI.VLSUBTOTITEM,
+			PCPEDI.UNIDADE,
+			PCPRODUT.DIRFOTOPROD
+      `, { numberOrder : headerOrder.rows[0][0] })
+
+		return { headerOrder, prodsOrder };
+	}
+
+	async findByNumNotaToConfer(numnota) {
+
+		let headerOrder = await executeQuery(`
+      SELECT
+        PCPEDC.NUMPED,
+        PCPEDC.ORIGEMPED,
+        PCUSUARI.NOME,
+        NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
+        PCPEDC.DATA,
+				PCPEDC.VLATEND,
+        PCPEDC.VLTOTAL,
+				PCPEDC.VLTABELA,
+				ROUND(PCPEDC.PERDESC, 2) AS PERDESC,
+        PCPEDC.CODCLI,
+        PCCLIENT.CLIENTE,
+				NVL(REGEXP_SUBSTR(PCCLIENT.DIRETORIOCLIENTE, '[^\\]+$'), 'not-found.png') AS DIRETORIOCLIENTE,
+        PCPEDC.POSICAO,
+        PCPEDC.OBS,
+        PCPEDC.OBS1,
+        PCPEDC.OBS2,
+        PCPEDC.OBSENTREGA1,
+        PCPEDC.OBSENTREGA2,
+        PCPEDC.OBSENTREGA3,
+        PCPEDC.NUMITENS,
+        PCPEDC.CODUSUR,
+        PCPEDC.CODCOB,
+        PCPEDC.PRAZO1,
+        PCPEDC.PRAZO2,
+        PCPEDC.PRAZO3,
+        PCPEDC.PRAZO4,
+        PCPEDC.PRAZO5
+      FROM PCPEDC
+      JOIN PCCLIENT ON PCCLIENT.CODCLI = PCPEDC.CODCLI
+			JOIN PCUSUARI ON PCUSUARI.CODUSUR = PCPEDC.CODUSUR
+      WHERE PCPEDC.NUMNOTA = :numnota
+      `, { numnota })
+
+		if(headerOrder.rows.length === 0) {
+			return []
+		}
+
+		let prodsOrder = await executeQuery(`
+      SELECT
+			PCPEDI.CODPROD,
+			PCPRODUT.DESCRICAO,
+			PCPEDI.QT,
+			PCPEDI.PVENDA,
+			PCPEDI.PTABELA,
+			PCPEDI.PERDESC,
+			PCPEDI.VLSUBTOTITEM,
+			PCPEDI.UNIDADE,
+			NVL(REGEXP_SUBSTR(PCPRODUT.DIRFOTOPROD, '[^\\]+$'), 'not-found.png') AS DIRFOTOPROD,
+			LISTAGG(PCEMBALAGEM.CODAUXILIAR, ',') WITHIN GROUP (ORDER BY PCEMBALAGEM.CODAUXILIAR) AS CODAUXILIARES,
+			0 AS QTCONFER
+			FROM PCPEDI
+			JOIN PCEMBALAGEM ON PCPEDI.CODPROD = PCEMBALAGEM.CODPROD
+			JOIN PCPRODUT ON PCPEDI.CODPROD = PCPRODUT.CODPROD
+      WHERE PCPEDI.NUMPED = :numberOrder
+			GROUP BY
+			PCPEDI.CODPROD,
+			PCPRODUT.DESCRICAO,
+			PCPEDI.QT,
+			PCPEDI.PVENDA,
+			PCPEDI.PTABELA,
+			PCPEDI.PERDESC,
+			PCPEDI.VLSUBTOTITEM,
+			PCPEDI.UNIDADE,
+			PCPRODUT.DIRFOTOPROD
+      `, { numberOrder : headerOrder.rows[0][0] })
+
+		return { headerOrder, prodsOrder };
+	}
+
 	async changePositionOfTelemarketingBtoL({ numberOrder, hours, minutes, seconds, date }){
 
 		let result = await executeQuery(`
