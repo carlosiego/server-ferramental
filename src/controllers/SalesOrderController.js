@@ -285,6 +285,14 @@ class SalesOrderController {
 		res.status(201).json({ message: 'Pedido modificado com sucesso!'})
 	}
 
+	async conferSalesOrder(req,res) {
+		let	numberOrder = req.params.numberorder
+		// PCPEDC
+		let { dtinitcheckout, dtfinishcheckout, codfunc } = req.query
+		//PCPEDI
+		let { dtinitcheckin, dtfinishcheckin } = req.query
+	}
+
 }
 
 module.exports = new SalesOrderController()
