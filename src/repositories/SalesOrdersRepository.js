@@ -439,6 +439,26 @@ class SalesOrdersRepository {
 		return salesOrder
 
 	}
+
+	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc }) {
+
+		await executeQuery(`
+			BEGIN
+
+				UPDATE PCPEDC
+					SET DTINICIALCHECKOUT = TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS'),
+					DTFINALCHECKOUT = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
+					CODFUNCCONF = :codfunc,
+					DTINICIALSEP = CASE WHEN DTINICIALSEP IS NULL THEN TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS') ELSE DTINICIALSEP END,
+					DTFINALSEP = CASE WHEN DTFINALSEP IS NULL THEN TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS') ELSE DTFINALSEP END,
+					CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END
+				WHERE PCPEDC.NUMPED = :numberOrder;
+
+				COMMIT;
+			END;
+		`, { numberOrder, dtinitcheckout, dtfinishcheckout, codfunc })
+
+	}
 }
 
 module.exports = new SalesOrdersRepository()

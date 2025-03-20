@@ -1,6 +1,6 @@
 const SalesOrdersRepository = require('../repositories/SalesOrdersRepository');
 const client = require('../redis');
-const isDate = require('../utils/isDate')
+const { isDate, isValidDateTimeFormat } = require('../utils/isDate')
 const moment = require('moment')
 
 class SalesOrderController {
@@ -286,11 +286,18 @@ class SalesOrderController {
 	}
 
 	async conferSalesOrder(req,res) {
+
 		let	numberOrder = req.params.numberorder
-		// PCPEDC
-		let { dtinitcheckout, dtfinishcheckout, codfunc } = req.query
-		//PCPEDI
-		let { dtinitcheckin, dtfinishcheckin } = req.query
+		let { dtinitcheckout, dtfinishcheckout, codfunc } = req.body
+
+		if (!isValidDateTimeFormat(dtinitcheckout) ||
+		!isValidDateTimeFormat(dtfinishcheckout) || !codfunc) {
+			return res.status(400).json({ message: 'Informações incompletas!'})
+		}
+
+		await SalesOrdersRepository.conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc })
+
+		return res.json('Pedido conferido com sucesso!')
 	}
 
 }
