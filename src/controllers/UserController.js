@@ -33,20 +33,33 @@ class UserController {
 		return res.json(users)
 	}
 
-	userIsActive(req, res) {
+	async userIsActive(req, res) {
 		let { username } = req.params
 
 		username = username.toUpperCase()
+
 		if(process.env.INVALID_USERS.includes(username)) {
 			return res.status(401).json({
 				message: 'Usuário não autorizado',
-				isvalid: false
+				isvalid: false,
+				codUser: 0
+			})
+		}
+
+		let codUser = await UsersRepository.findUser({username})
+
+		if(!codUser) {
+			return res.status(404).json({
+				message: 'Usuário não encontrado',
+				isvalid: false,
+				codUser: 0
 			})
 		}
 
 		return res.json({
 			message: 'Usuário autorizado',
-			isvalid: true
+			isvalid: true,
+			codUser
 		})
 
 	}

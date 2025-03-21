@@ -2,6 +2,15 @@ const executeQuery = require('../database/executeQuery')
 
 class UsersRepository {
 
+	async findUser({ username}) {
+
+		let codUser = await executeQuery(`
+			SELECT MATRICULA FROM PCEMPR WHERE NOME_GUERRA = :username
+		`, { username })
+
+		return codUser?.rows.length > 0 ? codUser?.rows[0][0] : null
+	}
+
 	async findUsersWithRca() {
 
 		let users = await executeQuery(`
