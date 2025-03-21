@@ -440,7 +440,7 @@ class SalesOrdersRepository {
 
 	}
 
-	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc }) {
+	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr }) {
 
 		await executeQuery(`
 			BEGIN
@@ -454,10 +454,18 @@ class SalesOrdersRepository {
 					CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END
 				WHERE PCPEDC.NUMPED = :numberOrder;
 
+				UPDATE PCPEDI
+					SET CODFUNCCONF = :codfunc,
+					CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END,
+					DATACONF = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
+					QTSEPARADA = QT
+				WHERE PCPEDI.NUMPED = :numberOrder AND CODPROD IN ((SELECT COLUMN_VALUE FROM TABLE(SYS.ODCINUMBERLIST(${codprodsStr}))));
+
 				COMMIT;
 			END;
 		`, { numberOrder, dtinitcheckout, dtfinishcheckout, codfunc })
 
+			return;
 	}
 }
 

@@ -288,14 +288,24 @@ class SalesOrderController {
 	async conferSalesOrder(req,res) {
 
 		let	numberOrder = req.params.numberorder
-		let { dtinitcheckout, dtfinishcheckout, codfunc } = req.body
+		let { dtinitcheckout, dtfinishcheckout, codfunc, codprods } = req.body
 
 		if (!isValidDateTimeFormat(dtinitcheckout) ||
-		!isValidDateTimeFormat(dtfinishcheckout) || !codfunc) {
+		!isValidDateTimeFormat(dtfinishcheckout) || !codfunc || !codprods) {
 			return res.status(400).json({ message: 'Informações incompletas!'})
 		}
 
-		await SalesOrdersRepository.conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc })
+		const codprodsSanitized = codprods
+  		.map(c => Number(c))
+  		.filter(c => !isNaN(c));
+
+		if (codprodsSanitized.length === 0) {
+			return res.status(400).json({ message: 'codprods não pode ser vazio ou inválido!' });
+		}
+
+		const codprodsStr = codprodsSanitized.join(',');
+
+		await SalesOrdersRepository.conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr })
 
 		return res.json('Pedido conferido com sucesso!')
 	}
