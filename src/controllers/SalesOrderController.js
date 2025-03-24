@@ -285,13 +285,16 @@ class SalesOrderController {
 		res.status(201).json({ message: 'Pedido modificado com sucesso!'})
 	}
 
-	async conferSalesOrder(req,res) {
+	async conferSalesOrder(req, res) {
 
 		let	numberOrder = req.params.numberorder
 		let { dtinitcheckout, dtfinishcheckout, codfunc, codprods } = req.body
 
+		console.log(`PEDIDO ${numberOrder} RECEBIDO PARA CONFERÊNCIA...`)
+
 		if (!isValidDateTimeFormat(dtinitcheckout) ||
 		!isValidDateTimeFormat(dtfinishcheckout) || !codfunc || !codprods) {
+			console.log('Erro, informações incompletas!')
 			return res.status(400).json({ message: 'Informações incompletas!'})
 		}
 
@@ -300,14 +303,23 @@ class SalesOrderController {
   		.filter(c => !isNaN(c));
 
 		if (codprodsSanitized.length === 0) {
-			return res.status(400).json({ message: 'codprods não pode ser vazio ou inválido!' });
+			console.log('ERRO, PEDIDO SEM CÓDIGOS')
+			return res.status(400).json({ message: 'Codprods não pode ser vazio ou inválido!' });
 		}
 
 		const codprodsStr = codprodsSanitized.join(',');
 
-		await SalesOrdersRepository.conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr })
+		console.log(`GRAVANDO CONFERÊNCIA DO PEDIDO ${numberOrder}...`)
 
-		return res.json('Pedido conferido com sucesso!')
+		let salesOrderConferred = await SalesOrdersRepository.conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr })
+
+		if(salesOrderConferred) {
+			console.log(`PEDIDO ${numberOrder} GRAVADO COM SUCESSO`)
+			return res.json('Pedido conferido com sucesso!')
+		}
+
+		res.status(400).json({ message: `ERROR AO CONFERIR O PEDIDO ${numberOrder}` })
+
 	}
 
 }

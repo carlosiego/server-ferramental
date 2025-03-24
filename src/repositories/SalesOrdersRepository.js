@@ -442,30 +442,38 @@ class SalesOrdersRepository {
 
 	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr }) {
 
-		await executeQuery(`
-			BEGIN
+		try {
 
-				UPDATE PCPEDC
-					SET DTINICIALCHECKOUT = TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS'),
-					DTFINALCHECKOUT = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
-					CODFUNCCONF = :codfunc,
-					DTINICIALSEP = CASE WHEN DTINICIALSEP IS NULL THEN TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS') ELSE DTINICIALSEP END,
-					DTFINALSEP = CASE WHEN DTFINALSEP IS NULL THEN TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS') ELSE DTFINALSEP END,
-					CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END
-				WHERE PCPEDC.NUMPED = :numberOrder;
+			await executeQuery(`
+				BEGIN
 
-				UPDATE PCPEDI
-					SET CODFUNCCONF = :codfunc,
-					CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END,
-					DATACONF = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
-					QTSEPARADA = QT
-				WHERE PCPEDI.NUMPED = :numberOrder AND CODPROD IN ((SELECT COLUMN_VALUE FROM TABLE(SYS.ODCINUMBERLIST(${codprodsStr}))));
+					UPDATE PCPEDC
+						SET DTINICIALCHECKOUT = TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS'),
+						DTFINALCHECKOUT = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
+						CODFUNCCONF = :codfunc,
+						DTINICIALSEP = NVL(DTINICIALSEP, TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS')),
+						DTFINALSEP = NVL(DTFINALSEP, TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS')),
+						CODFUNCSEP = NVL(CODFUNCSEP, :codfunc)
+					WHERE PCPEDC.NUMPED = :numberOrder;
 
-				COMMIT;
-			END;
-		`, { numberOrder, dtinitcheckout, dtfinishcheckout, codfunc })
+					UPDATE PCPEDI
+						SET CODFUNCCONF = :codfunc,
+						CODFUNCSEP = NVL(CODFUNCSEP, :codfunc),
+						DATACONF = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
+						QTSEPARADA = QT
+					WHERE NUMPED = :numberOrder AND CODPROD IN (${codprodsStr});
 
-			return;
+					COMMIT;
+				END;
+			`, { numberOrder, dtinitcheckout, dtfinishcheckout, codfunc });
+
+			return true
+
+	} catch (err) {
+		console.error(`ERRO NA CONFERÊNCIA DO PEDIDO ${numberOrder}:`, err);
+		return false
+	}
+
 	}
 }
 
