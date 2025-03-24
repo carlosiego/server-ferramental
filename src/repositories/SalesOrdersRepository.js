@@ -450,15 +450,11 @@ class SalesOrdersRepository {
 					UPDATE PCPEDC
 						SET DTINICIALCHECKOUT = TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS'),
 						DTFINALCHECKOUT = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
-						CODFUNCCONF = :codfunc,
-						DTINICIALSEP = NVL(DTINICIALSEP, TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS')),
-						DTFINALSEP = NVL(DTFINALSEP, TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS')),
-						CODFUNCSEP = NVL(CODFUNCSEP, :codfunc)
+						CODFUNCCONF = :codfunc
 					WHERE PCPEDC.NUMPED = :numberOrder;
 
 					UPDATE PCPEDI
 						SET CODFUNCCONF = :codfunc,
-						CODFUNCSEP = NVL(CODFUNCSEP, :codfunc),
 						DATACONF = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
 						QTSEPARADA = QT
 					WHERE NUMPED = :numberOrder AND CODPROD IN (${codprodsStr});
