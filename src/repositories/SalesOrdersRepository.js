@@ -440,7 +440,7 @@ class SalesOrdersRepository {
 
 	}
 
-	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr }) {
+	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc }) {
 
 		try {
 
@@ -450,14 +450,18 @@ class SalesOrdersRepository {
 					UPDATE PCPEDC
 						SET DTINICIALCHECKOUT = TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS'),
 						DTFINALCHECKOUT = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
-						CODFUNCCONF = :codfunc
+						DTINICIALSEP = CASE WHEN DTINICIALSEP IS NULL THEN TO_DATE(:dtinitcheckout, 'DD/MM/YYYY HH24:MI:SS') ELSE DTINICIALSEP END,
+						DTFINALSEP = CASE WHEN DTFINALSEP IS NULL THEN TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS') ELSE DTFINALSEP END,
+						CODFUNCCONF = :codfunc,
+						CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END
 					WHERE PCPEDC.NUMPED = :numberOrder;
 
 					UPDATE PCPEDI
 						SET CODFUNCCONF = :codfunc,
+						CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END,
 						DATACONF = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
 						QTSEPARADA = QT
-					WHERE NUMPED = :numberOrder AND CODPROD IN (${codprodsStr});
+					WHERE NUMPED = :numberOrder;
 
 					COMMIT;
 				END;
