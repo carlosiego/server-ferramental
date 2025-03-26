@@ -440,7 +440,7 @@ class SalesOrdersRepository {
 
 	}
 
-	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc }) {
+	async conferSalesOrder({ numberOrder, dtinitcheckout, dtfinishcheckout, codfunc, codprodsStr }) {
 
 		try {
 
@@ -460,7 +460,7 @@ class SalesOrdersRepository {
 						SET CODFUNCCONF = :codfunc,
 						CODFUNCSEP = CASE WHEN CODFUNCSEP IS NULL THEN :codfunc ELSE CODFUNCSEP END,
 						DATACONF = TO_DATE(:dtfinishcheckout, 'DD/MM/YYYY HH24:MI:SS'),
-						QTSEPARADA = QT
+						QTSEPARADA = CASE WHEN PCPEDI.CODPROD IN (${codprodsStr}) THEN PCPEDI.QT ELSE 0 END
 					WHERE NUMPED = :numberOrder;
 
 					COMMIT;
