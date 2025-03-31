@@ -7,6 +7,7 @@ class SalesOrdersRepository {
 		let headerOrder = await executeQuery(`
       SELECT
         PCPEDC.NUMPED,
+				PCPEDC.DTFINALCHECKOUT,
         PCPEDC.ORIGEMPED,
         PCUSUARI.NOME,
         NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
@@ -81,6 +82,7 @@ class SalesOrdersRepository {
 		let headerOrder = await executeQuery(`
       SELECT
         PCPEDC.NUMPED,
+				PCPEDC.DTFINALCHECKOUT,
         PCPEDC.ORIGEMPED,
         PCUSUARI.NOME,
         NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
@@ -147,6 +149,7 @@ class SalesOrdersRepository {
 		let headerOrder = await executeQuery(`
       SELECT
         PCPEDC.NUMPED,
+				PCPEDC.DTFINALCHECKOUT,
         PCPEDC.ORIGEMPED,
         PCUSUARI.NOME,
         NVL(PCUSUARI.USURDIRFV, 'not-found.png') AS USURDIRFV,
