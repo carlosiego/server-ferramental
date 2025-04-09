@@ -22,6 +22,28 @@ class BonusRepository {
 		return bonus
 	}
 
+	async findBonusItens({ numbonus }) {
+
+		let itens = await executeQuery(`
+			SELECT
+			PCBONUSI.CODPROD,
+			PCBONUSI.QTNF,
+			PCBONUSI.QTENTRADA,
+			PCBONUSI.DTVALIDADE,
+			PCPRODUT.DESCRICAO,
+			PCPRODUT.EMBALAGEM,
+			PCPRODUT.DIRFOTOPROD,
+			PCMARCA.MARCA
+			FROM PCBONUSI
+			JOIN PCPRODUT ON PCPRODUT.CODPROD = PCBONUSI.CODPROD
+			LEFT JOIN PCMARCA ON PCPRODUT.CODMARCA = PCMARCA.CODMARCA
+			WHERE PCBONUSI.NUMBONUS = :numbonus
+			ORDER BY PCPRODUT.DESCRICAO
+		` ,{ numbonus })
+
+		return itens
+	}
+
 }
 
 module.exports = new BonusRepository()

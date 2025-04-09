@@ -24,6 +24,30 @@ class BonusController {
 
 	}
 
+	async showItensByNumBonus(req, res) {
+
+		let { numbonus } = req.params
+
+		let { metaData, rows} = await BonusRepository.findBonusItens({ numbonus })
+
+		if(!rows.length) {
+			return res.status(404).json({ message: 'Bônus não encontrado' })
+		}
+
+		let itens = []
+
+		rows.forEach(item => {
+			let prop = {}
+			item.forEach((value, index) => {
+				prop[metaData[index].name] = value
+			})
+			itens.push(prop)
+		})
+
+		return res.json(itens)
+
+	}
+
 }
 
 module.exports = new BonusController()
