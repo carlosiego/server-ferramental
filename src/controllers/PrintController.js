@@ -82,13 +82,11 @@ class PrintController {
 				GAP 0.12,0\n
 				DIRECTION 1\n
 				CLS\n
-				BAR 0,20,700,2\n
-				TEXT 20,40,"2",0,1,1,"${product?.DESCRICAO}"\n
+				TEXT 15,20,"2",0,1,2,"${product?.DESCRICAO}"\n
 				BAR 0,65,700,2\n
-				BARCODE 20,100,"128",100,1,0,2,2,"${product?.CODAUXILIAR}"\n
-				TEXT 290,120,"3",0,1,1,"CODIGO:${product?.CODPROD}"\n
-				TEXT 291,120,"3",0,1,1,"CODIGO:${product?.CODPROD}"\n
-				TEXT 290,150,"3",0,1,1,"${product?.EMBALAGEM}"\n
+				BARCODE 25,100,"128",100,1,0,2,2,"${product?.CODAUXILIAR}"\n
+				TEXT 290,100,"2",0,2,4,"COD:${product?.CODPROD}"\n
+				TEXT 290,180,"3",0,1,1,"${product?.EMBALAGEM}"\n
 				PRINT ${numberOfPrints}\n`
 			, () => {
 				console.log('Dados enviados para impressão.');
