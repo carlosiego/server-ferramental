@@ -48,6 +48,29 @@ class BonusController {
 
 	}
 
+	async conferBonus(req, res) {
+
+		let { numbonus } = req.params
+
+		let { metaData, rows} = await BonusRepository.findBonusItens({ numbonus })
+
+		if(!rows.length) {
+			return res.status(404).json({ message: 'Bônus não encontrado' })
+		}
+
+		console.log('Iniciando conferência do bônus: ', numbonus)
+		let bonusConfer = await BonusRepository.saveConferBonus({ numbonus })
+
+		if(!bonusConfer) {
+			return res.status(500).json({
+				message: 'Erro ao conferir o bônus'
+			})
+		}
+
+		return res.json({ message: `Bônus ${numbonus} conferido`})
+
+	}
+
 }
 
 module.exports = new BonusController()

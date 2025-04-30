@@ -49,6 +49,35 @@ class BonusRepository {
 		return itens
 	}
 
+	async saveConferBonus({ numbonus }) {
+
+		try {
+
+			await executeQuery(`
+				BEGIN
+
+					UPDATE PCBONUSC
+						SET DATARM = CURRENT_DATE,
+						CODFUNCRM = 48
+					WHERE NUMBONUS = :numbonus;
+
+					UPDATE PCBONUSI
+						SET QTENTRADA = QTNF,
+						QTENTUN = QTNF
+					WHERE NUMBONUS = :numbonus;
+
+					COMMIT;
+				END;
+			`, { numbonus });
+
+			return true
+
+	} catch (err) {
+		console.error(`ERRO AO CONFERIR O BÔNUS ${numberOrder}:`, err);
+		return false
+	}
+	}
+
 }
 
 module.exports = new BonusRepository()
