@@ -5,6 +5,7 @@ const initializeOracleDB = require('./database/initializeOracleDB')
 initializeOracleDB()
 const compression = require('compression')
 const productsRouter = require('./routes/productsRoutes')
+const addressesRouter = require('./routes/addressesRoutes')
 const bonusRouter = require('./routes/bonusRoutes')
 const salesOrdersRouter = require('./routes/salesOrdersRoutes')
 const budgetsRouter = require('./routes/budgetsRoutes')
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
 });
 
 app.use(compression())
-app.use(productsRouter, bonusRouter, salesOrdersRouter, budgetsRouter, supplierRouter, usersRoutes, clientsRoutes, printerRoutes)
+app.use(productsRouter, bonusRouter, salesOrdersRouter, budgetsRouter, supplierRouter, usersRoutes, clientsRoutes, printerRoutes, addressesRouter)
 
 app.use((error, req, res, next) => {
 
