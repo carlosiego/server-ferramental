@@ -135,7 +135,7 @@ class SalesOrderController {
 			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
 
-		res.json({ message: 'Pedido liberado com sucesso'})
+		res.status(201).json({ message: 'Pedido liberado com sucesso'})
 	}
 
 	async modifyPositionOfBalcaoReservaBtoM(req, res) {
@@ -158,23 +158,21 @@ class SalesOrderController {
 		}
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
-		if (salesOrder.length === 0) {
+		if (salesOrder?.length === 0) {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
 		}
 
-		let indexOfOrigemPed = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'ORIGEMPED')
-		let origemPed = salesOrder.headerOrder.rows[0][indexOfOrigemPed]
+		let origemPed = salesOrder.headers?.ORIGEMPED
 
 		if(origemPed !== 'R') return res.status(400).json({ message: 'Erro, pedido tem que ser de origem Balcão reserva!' })
 
-		let indexOfPosicao = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'POSICAO')
-		let posicao = salesOrder.headerOrder.rows[0][indexOfPosicao]
+		let posicao = salesOrder.headers?.POSICAO
 
 		if(posicao !== 'B') return res.status(400).json({ message: 'Erro, pedido não está bloqueado!' })
 
 		let result = await SalesOrdersRepository.changePositionOfBalcaoReservaBtoM({ numberOrder, hours, minutes, seconds, date })
 
-		if(result.errorNum) {
+		if(result?.errorNum) {
 			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
 
@@ -187,16 +185,16 @@ class SalesOrderController {
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
-		if (salesOrder.length === 0) {
+		if (salesOrder?.length === 0) {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
 		}
 
 		let result = await SalesOrdersRepository.blockPosition({ numberOrder })
 
-		if(result.errorNum) {
+		if(result?.errorNum) {
 			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
-		console.log(result)
+
 		res.status(201).json({ message: 'Pedido bloqueado com sucesso!'})
 	}
 
@@ -211,16 +209,16 @@ class SalesOrderController {
 
 		let salesOrder = await SalesOrdersRepository.findByNumOrder(numberOrder)
 
-		if (salesOrder.length === 0) {
+		if (salesOrder?.length === 0) {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
 		}
 
 		let result = await SalesOrdersRepository.modifyAndFix({ numberOrder, position })
 
-		if(result.errorNum) {
+		if(result?.errorNum) {
 			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
-		console.log(result)
+
 		res.status(201).json({ message: 'Pedido modificado com sucesso!'})
 	}
 
