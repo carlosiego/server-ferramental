@@ -14,7 +14,6 @@ class SupplierRepository {
 			WHERE PCFORNEC.CODFORNEC = :code
 		`, { code })
 
-
 		return supplier;
 	}
 
@@ -46,7 +45,7 @@ class SupplierRepository {
 				PCFORNEC.CGC AS CNPJ,
 				PCFORNEC.FANTASIA
 				FROM PCFORNEC
-			WHERE PCFORNEC.CGC = :cnpj
+			WHERE PCFORNEC.CGCAUX = :cnpj
 		`, { cnpj })
 
 		return supplier;
