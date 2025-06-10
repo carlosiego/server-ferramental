@@ -1,16 +1,15 @@
 const getConnection = require('./dbConnection');
+const oracledb = require('oracledb')
 
-async function executeQuery(query, binds) {
+async function executeQuery(query, binds = []) {
 	const connection = await getConnection();
 
 	try {
-		let result;
-		if(binds){
-			result = await connection.execute(query, binds);
-		}else{
-			result = await connection.execute(query);
-		}
+
+		let result = await connection.execute(query, binds, { outFormat: oracledb.OBJECT });
+
 		return result;
+
 	} catch (error) {
 		console.error('Error executing query:', error);
 		return error;

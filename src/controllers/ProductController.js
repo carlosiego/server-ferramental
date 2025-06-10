@@ -11,18 +11,13 @@ class ProductsController {
 		if (productFromCache) {
 			return res.json(JSON.parse(productFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findByCode(code)
-		let [row] = rows
+		let { rows: [ product ] } = await ProductsRepository.findByCode(code)
 
-		if (!row) {
+		if (!product) {
 			await client.set(fullUrl, JSON.stringify({ error: 'Produto não encontrado' }), { EX: process.env.EXPIRATION })
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		let product = {}
-		row.forEach((item, index) => {
-			product[metaData[index].name] = item
-		})
 		await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION })
 		res.json(product)
 	}
@@ -33,24 +28,16 @@ class ProductsController {
 		let { orderBy } = req.query
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findByDescription(description, orderBy)
 
-		if(!rows.length) {
+		let { rows: products } = await ProductsRepository.findByDescription(description, orderBy)
+
+		if(!products.length) {
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
-
-		let products = []
-
-		rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[metaData[index].name] = value
-			})
-			products.push(prod)
-		})
 
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
@@ -63,24 +50,17 @@ class ProductsController {
 		let { orderBy } = req.query
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findMinimumByDescription(description, orderBy)
 
-		if(!rows.length) {
+		let { rows: products } = await ProductsRepository.findMinimumByDescription(description, orderBy)
+
+		if(!products.length) {
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		let products = []
-
-		rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[metaData[index].name] = value
-			})
-			products.push(prod)
-		})
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
 
@@ -91,26 +71,21 @@ class ProductsController {
 		let { codebar: codeBar } = req.params
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findByCodeBar(codeBar)
-		let [row] = rows
 
-		if (!row) {
+		let { rows: [ product ] } = await ProductsRepository.findByCodeBar(codeBar)
+
+		if (!product) {
 			await client.set(fullUrl, JSON.stringify({ error: 'Produto não encontrado' }), { EX: process.env.EXPIRATION })
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		let products = {}
+		await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION})
 
-		row.forEach((item, index) => {
-			products[metaData[index]?.name] = item
-		})
-
-		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
-
-		res.json(products)
+		res.json(product)
 
 	}
 
@@ -119,26 +94,21 @@ class ProductsController {
 		let { codebar: codeBar } = req.params
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findMinimumByCodeBar(codeBar)
-		let [row] = rows
 
-		if (!row) {
+		let { rows: [ product ] } = await ProductsRepository.findMinimumByCodeBar(codeBar)
+
+		if (!product) {
 			await client.set(fullUrl, JSON.stringify({ error: 'Produto não encontrado' }), { EX: process.env.EXPIRATION })
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		let products = {}
+		await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION})
 
-		row.forEach((item, index) => {
-			products[metaData[index].name] = item
-		})
-
-		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
-
-		res.json(products)
+		res.json(product)
 
 	}
 
@@ -147,24 +117,17 @@ class ProductsController {
 		let { codesection: codeSection } = req.params
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findBySection(codeSection)
 
-		if(!rows.length) {
+		let { rows: products } = await ProductsRepository.findBySection(codeSection)
+
+		if(!products.length) {
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		let products = []
-
-		rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[metaData[index].name] = value
-			})
-			products.push(prod)
-		})
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
 	}
@@ -174,24 +137,17 @@ class ProductsController {
 		let { codesection: codeSection } = req.params
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
-		let { metaData, rows } = await ProductsRepository.findMinimumBySection(codeSection)
 
-		if(!rows.length) {
+		let { rows: products } = await ProductsRepository.findMinimumBySection(codeSection)
+
+		if(!products.length) {
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		let products = []
-
-		rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[metaData[index].name] = value
-			})
-			products.push(prod)
-		})
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		res.json(products)
 	}
@@ -200,27 +156,18 @@ class ProductsController {
 
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let promotionsFromCache = await client.get(fullUrl)
+
 		if(promotionsFromCache) {
 			return res.json(JSON.parse(promotionsFromCache))
 		}
 
-		let { metaData, rows } = await ProductsRepository.findPromotions()
+		let { rows: promotions } = await ProductsRepository.findPromotions()
 
-		if(!rows.length) {
+		if(!promotions?.length) {
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
 
-		if(!rows) return res.json([])
-
-		let promotions = []
-
-		rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[metaData[index].name] = value
-			})
-			promotions.push(prod)
-		})
+		if(!promotions) return res.json([])
 
 		await client.set(fullUrl, JSON.stringify(promotions), { EX: process.env.EXPIRATION})
 		res.json(promotions)
@@ -230,28 +177,20 @@ class ProductsController {
 	async showBySupplier(req, res) {
 
 		let { code } = req.params
-
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 		let productsFromCache = await client.get(fullUrl)
+
 		if(productsFromCache) {
 			return res.json(JSON.parse(productsFromCache))
 		}
 
-		let { metaData, rows } = await ProductsRepository.findBySupplier(code)
+		let { rows: products } = await ProductsRepository.findBySupplier(code)
 
-		if(!rows.length) {
+		if(!products?.length) {
 			await client.set(fullUrl, JSON.stringify({error: 'Fornecedor não encontrado'}), { EX: process.env.EXPIRATION})
 			return res.status(404).json({error: 'Fornecedor não encontrado'})
 		}
-		let products = []
 
-		rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[metaData[index].name] = value
-			})
-			products.push(prod)
-		})
 		await client.set(fullUrl, JSON.stringify(products), { EX: process.env.EXPIRATION})
 		return res.json(products)
 
@@ -267,18 +206,11 @@ class ProductsController {
 			return res.json(JSON.parse(productFromCache))
 		}
 
-		let { metaData, rows } = await ProductsRepository.findMoreCodAuxiliar(code)
+		let { rows: [product] } = await ProductsRepository.findMoreCodAuxiliar(code)
 
-		let [row] = rows
-
-		if (!row) {
+		if (!product) {
 			return res.status(404).json({ error: 'Produto não encontrado' })
 		}
-
-		let product = {}
-		row.forEach((item, index) => {
-			product[metaData[index].name] = item
-		})
 
 		await client.set(fullUrl, JSON.stringify(product), { EX: process.env.EXPIRATION })
 		res.json(product)
