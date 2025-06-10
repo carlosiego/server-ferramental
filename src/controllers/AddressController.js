@@ -13,18 +13,11 @@ class AddressController {
 			return res.json(JSON.parse(addressesFromCache))
 		}
 
-		let { metaData, rows} = await AddressesRepository.findAllAddresses();
+		let { rows: addresses } = await AddressesRepository.findAllAddresses();
 
-		if(!rows.length) {
+		if(!addresses?.length) {
 			return res.status(404).json({ error: 'Endereços não encontrado' })
 		}
-
-		const addresses = rows.map(row =>
-  		row.reduce((acc, value, index) => {
-    		acc[metaData[index].name] = value
-    		return acc
-  		}, {})
-		)
 
 		await client.set(fullUrl, JSON.stringify(addresses), { EX: process.env.EXPIRATION})
 		res.json(addresses)
@@ -46,19 +39,11 @@ class AddressController {
 			return res.json(JSON.parse(addressFromCache))
 		}
 
-		let { metaData, rows} = await AddressesRepository.findAddress({ storehouse, street, numberaddress, apartment, typeaddress });
+		let { rows: [ address ] } = await AddressesRepository.findAddress({ storehouse, street, numberaddress, apartment, typeaddress });
 
-		let [row] = rows
-
-		if(!row) {
+		if(!address) {
 			return res.status(404).json({ error: 'Endereço não encontrado' })
 		}
-
-		let address = {}
-
-		row.forEach((item, index) => {
-			address[metaData[index].name] = item
-		})
 
 		await client.set(fullUrl, JSON.stringify(address), { EX: process.env.EXPIRATION})
 		res.json(address)
@@ -75,11 +60,9 @@ class AddressController {
 			return res.status(400).json({ error: 'Parâmetros inválidos' })
 		}
 
-		let { metaData, rows} = await AddressesRepository.findAddress({ storehouse, street, numberaddress, apartment, typeaddress });
+		let { rows: [ address ]} = await AddressesRepository.findAddress({ storehouse, street, numberaddress, apartment, typeaddress });
 
-		let [row] = rows
-
-		if(!row) {
+		if(!address) {
 			return res.status(404).json({ error: 'Endereço não encontrado' })
 		}
 

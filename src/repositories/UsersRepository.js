@@ -8,7 +8,7 @@ class UsersRepository {
 			SELECT MATRICULA FROM PCEMPR WHERE NOME_GUERRA = :username
 		`, { username })
 
-		return codUser?.rows.length > 0 ? codUser?.rows[0][0] : null
+		return codUser?.rows.length > 0 ? codUser?.rows[0]?.MATRICULA : null
 	}
 
 	async findUsersWithRca() {
