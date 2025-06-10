@@ -50,10 +50,10 @@ class SalesOrdersRepository {
         PCPEDI.CODPROD,
         PCPEDI.QT,
         PCPEDI.PVENDA,
-		PCPEDI.PTABELA,
-		PCPEDI.PERDESC,
-		PCPEDI.VLSUBTOTITEM,
-		PCPEDI.UNIDADE,
+				PCPEDI.PTABELA,
+				PCPEDI.PERDESC,
+				PCPEDI.VLSUBTOTITEM,
+				PCPEDI.UNIDADE,
         PCPEDI.CODST,
         (CASE WHEN(PCPEDI.CODST IN (5)) THEN 19
         WHEN(PCPEDI.CODST IN (6)) THEN 12
@@ -74,7 +74,7 @@ class SalesOrdersRepository {
       WHERE PCPEDI.NUMPED = :numberOrder
       `, { numberOrder })
 
-		return { headerOrder, prodsOrder };
+		return { headers: headerOrder.rows[0], products: prodsOrder.rows };
 	}
 
 	async findByNumOrderToConfer(numberOrder) {
@@ -141,7 +141,7 @@ class SalesOrdersRepository {
       WHERE PCPEDI.NUMPED = :numberOrder
       `, { numberOrder })
 
-		return { headerOrder, prodsOrder };
+		return { headers: headerOrder.rows[0], products: prodsOrder.rows };
 	}
 
 	async findByNumNotaToConfer(numnota, serie) {
@@ -207,9 +207,9 @@ class SalesOrdersRepository {
 			FROM PCPEDI
 			JOIN PCPRODUT ON PCPEDI.CODPROD = PCPRODUT.CODPROD
       WHERE PCPEDI.NUMPED = :numberOrder
-      `, { numberOrder : headerOrder.rows[0][0] })
+      `, { numberOrder : headerOrder.rows[0]?.NUMPED })
 
-		return { headerOrder, prodsOrder };
+		return { headers: headerOrder.rows[0], products: prodsOrder.rows };
 	}
 
 	async changePositionOfTelemarketingBtoL({ numberOrder, hours, minutes, seconds, date }){

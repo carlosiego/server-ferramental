@@ -9,8 +9,8 @@ class SalesOrderController {
 
 		let numberOrder = req.params.numberorder
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
-
 		let salesOrderFromCache = await client.get(fullUrl)
+
 		if (salesOrderFromCache) {
 			return res.json(JSON.parse(salesOrderFromCache))
 		}
@@ -22,25 +22,8 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		let { headerOrder, prodsOrder } = saleOrder
-
-		let headers = {}
-		let products = []
-
-		headerOrder.metaData.forEach((item, index) => {
-			headers[item.name] = headerOrder.rows[0][index]
-		})
-
-		prodsOrder.rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[prodsOrder.metaData[index].name] = value
-			})
-			products.push(prod)
-		})
-
-		await client.set(fullUrl, JSON.stringify({ headers, products }), { EX: process.env.EXPIRATION})
-		res.json({ headers, products })
+		await client.set(fullUrl, JSON.stringify(saleOrder), { EX: process.env.EXPIRATION})
+		res.json(saleOrder)
 
 	}
 
@@ -61,25 +44,8 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		let { headerOrder, prodsOrder } = saleOrder
-
-		let headers = {}
-		let products = []
-
-		headerOrder.metaData.forEach((item, index) => {
-			headers[item.name] = headerOrder.rows[0][index]
-		})
-
-		prodsOrder.rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[prodsOrder.metaData[index].name] = value
-			})
-			products.push(prod)
-		})
-
-		await client.set(fullUrl, JSON.stringify({ headers, products }), { EX: process.env.EXPIRATION})
-		res.json({ headers, products })
+		await client.set(fullUrl, JSON.stringify(saleOrder), { EX: process.env.EXPIRATION})
+		res.json(saleOrder)
 
 	}
 
@@ -90,6 +56,7 @@ class SalesOrderController {
 		let fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 
 		let salesOrderFromCache = await client.get(fullUrl)
+
 		if (salesOrderFromCache) {
 			return res.json(JSON.parse(salesOrderFromCache))
 		}
@@ -105,25 +72,8 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado' })
 		}
 
-		let { headerOrder, prodsOrder } = saleOrder
-
-		let headers = {}
-		let products = []
-
-		headerOrder.metaData.forEach((item, index) => {
-			headers[item.name] = headerOrder.rows[0][index]
-		})
-
-		prodsOrder.rows.forEach((item) => {
-			let prod = {}
-			item.forEach((value, index) => {
-				prod[prodsOrder.metaData[index].name] = value
-			})
-			products.push(prod)
-		})
-
-		await client.set(fullUrl, JSON.stringify({ headers, products }), { EX: process.env.EXPIRATION})
-		res.json({ headers, products })
+		await client.set(fullUrl, JSON.stringify(saleOrder), { EX: process.env.EXPIRATION})
+		res.json(saleOrder)
 
 	}
 
@@ -141,19 +91,10 @@ class SalesOrderController {
 			return res.status(400).json({ message: 'Data inicial não pode ser maior que a final.'})
 		}
 
-		let { metaData , rows } = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
+		let { rows: salesOrder} = await SalesOrdersRepository.findByRca({ rca, initialDate, finalDate, position })
 
-		let sales = []
+		return res.json(salesOrder)
 
-		rows.forEach(item => {
-			let prop = {}
-			item.forEach((value, index) => {
-				prop[metaData[index].name] = value
-			})
-			sales.push(prop)
-		})
-
-		return res.json(sales);
 	}
 
 	async modifyPositionOfTelemarketingBtoL(req, res) {
@@ -180,19 +121,17 @@ class SalesOrderController {
 			return res.status(404).json({ error: 'Pedido de venda não encontrado!' })
 		}
 
-		let indexOfOrigemPed = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'ORIGEMPED')
-		let origemPed = salesOrder.headerOrder.rows[0][indexOfOrigemPed]
+		let origemPed = salesOrder.headers?.ORIGEMPED
 
 		if(origemPed !== 'T') return res.status(400).json({ message: 'Erro, pedido tem que ser de origem Telemarketing!' })
 
-		let indexOfPosicao = salesOrder.headerOrder.metaData.findIndex(item => item.name === 'POSICAO')
-		let posicao = salesOrder.headerOrder.rows[0][indexOfPosicao]
+		let posicao = salesOrder.headers?.POSICAO
 
 		if(posicao !== 'B') return res.status(400).json({ message: 'Erro, pedido não está bloqueado!' })
 
 		let result = await SalesOrdersRepository.changePositionOfTelemarketingBtoL({ numberOrder, hours, minutes, seconds, date })
 
-		if(result.errorNum) {
+		if(result?.errorNum) {
 			return res.status(400).json({ message: `Error oracle ${result.errorNum}`})
 		}
 
