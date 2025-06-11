@@ -1,14 +1,21 @@
 const net = require('net');
+const ProductsRepository = require('../repositories/ProductsRepository.js');
 
 class PrintController {
 
  async printWithPrice(req, res) {
 
-	const { product, numberOfPrints, printer } = req.body;
+	const { product: prod, numberOfPrints, printer } = req.body;
 
 	const printerIP = {
 		store: '192.168.1.114', // LOJA
 		warehouse: '192.168.1.113' // DEPOSITO
+	}
+
+	let { rows: [ product ]} = await ProductsRepository.findByCode(prod?.CODPROD);
+
+	if(!product) {
+		return res.status(404).json({ error: 'Produto não encontrado' });
 	}
 
 	product.DESCRICAO = product?.DESCRICAO.replaceAll('"', "'");
@@ -61,11 +68,17 @@ class PrintController {
 
  async printWithoutPrice(req, res) {
 
-	const {product, numberOfPrints, printer } = req.body;
+	const { product: prod, numberOfPrints, printer } = req.body;
 
 	const printerIP = {
 		store: '192.168.1.114', // LOJA
 		warehouse: '192.168.1.113' // DEPOSITO
+	}
+
+	let { rows: [ product ]} = await ProductsRepository.findByCode(prod?.CODPROD);
+
+	if(!product) {
+		return res.status(404).json({ error: 'Produto não encontrado' });
 	}
 
 	product.DESCRICAO = product?.DESCRICAO.replaceAll('"', "'");
