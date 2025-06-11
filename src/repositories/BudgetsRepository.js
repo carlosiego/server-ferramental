@@ -4,7 +4,7 @@ class BudgetsRepository {
 
 	async findByNumber(numberBudget) {
 
-		let headersBudget = await executeQuery(`
+		let headers = await executeQuery(`
       SELECT
         PCORCAVENDAC.CODCLI,
         PCORCAVENDAC.DATA,
@@ -18,7 +18,7 @@ class BudgetsRepository {
       WHERE PCORCAVENDAC.NUMORCA = :numberBudget
     `, { numberBudget })
 
-		let prodsBudget = await executeQuery(`
+		let products = await executeQuery(`
       SELECT
         PCORCAVENDAI.CODPROD,
         PCPRODUT.DESCRICAO,
@@ -46,7 +46,7 @@ class BudgetsRepository {
       WHERE PCORCAVENDAI.NUMORCA = :numberBudget
     `, { numberBudget })
 
-		return [headersBudget, prodsBudget];
+		return {headers: headers?.rows[0], products: products?.rows};
 
 	}
 }
