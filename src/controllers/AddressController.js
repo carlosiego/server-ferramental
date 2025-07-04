@@ -56,18 +56,22 @@ class AddressController {
 
 		let { storehouse, street, numberaddress, apartment, typeaddress } = req.body
 
+		console.log(`Vincular endereço ao produto ${code} ao endereço ${storehouse}.${street}.${numberaddress}.${apartment}.${typeaddress}`)
+
 		if (!code || !storehouse || !street || !numberaddress || !apartment || !typeaddress) {
-			return res.status(400).json({ error: 'Parâmetros inválidos' })
+			console.log('Erro ao vincular endereço, parâmetros inválidos')
+			return res.status(400).json({ error: 'Erro ao vincular endereço, parâmetros inválidos' })
 		}
 
 		let { rows: [ address ]} = await AddressesRepository.findAddress({ storehouse, street, numberaddress, apartment, typeaddress });
 
 		if(!address) {
+			console.log('Endereço não encontrado')
 			return res.status(404).json({ error: 'Endereço não encontrado' })
 		}
 
 		await AddressesRepository.updateAddress({ code, storehouse, street, numberaddress, apartment, typeaddress });
-
+		console.log('Endereço atualizado com sucesso')
 		res.json({ message: 'Endereço atualizado com sucesso' })
 
 	}
