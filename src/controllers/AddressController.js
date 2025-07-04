@@ -58,9 +58,13 @@ class AddressController {
 
 		console.log(`Vincular endereço ao produto ${code} ao endereço ${storehouse}.${street}.${numberaddress}.${apartment}.${typeaddress}`)
 
-		if (!code || !storehouse || !street || !numberaddress || !apartment || !typeaddress) {
-			console.log('Erro ao vincular endereço, parâmetros inválidos')
-			return res.status(400).json({ error: 'Erro ao vincular endereço, parâmetros inválidos' })
+		function isEmpty(value) {
+			return value === null || value === undefined || value === '';
+		}
+
+		if(isEmpty(code) || isEmpty(storehouse) || isEmpty(street) || isEmpty(numberaddress) || isEmpty(apartment) || isEmpty(typeaddress)) {
+			console.log('Erro ao vincular endereço, parâmetros inválidos');
+			return res.status(400).json({ error: 'Erro ao vincular endereço, parâmetros inválidos' });
 		}
 
 		let { rows: [ address ]} = await AddressesRepository.findAddress({ storehouse, street, numberaddress, apartment, typeaddress });
@@ -77,6 +81,5 @@ class AddressController {
 	}
 
 }
-
 
 module.exports = new AddressController();
